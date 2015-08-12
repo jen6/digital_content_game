@@ -43,6 +43,8 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
+    <IncludePath>E:\boost_1_58_0;$(IncludePath)</IncludePath>
+    <LibraryPath>E:\boost_1_58_0\stage\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -78,6 +80,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="game_room.cpp" />
+    <ClCompile Include="game_session.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="manage_server.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="game_room.h" />
+    <ClInclude Include="game_session.h" />
+    <ClInclude Include="manage_server.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

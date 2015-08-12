@@ -13,5 +13,39 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="소스 파일\connection">
+      <UniqueIdentifier>{646a518b-f376-4352-af77-31f5527718bb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\threadpool">
+      <UniqueIdentifier>{b83b7a84-7b6d-4092-8b6b-9f1440f5ad7a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\connection">
+      <UniqueIdentifier>{e210a48e-b7e9-4244-8631-23ecc126a02c}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="manage_server.cpp">
+      <Filter>소스 파일\connection</Filter>
+    </ClCompile>
+    <ClCompile Include="game_room.cpp">
+      <Filter>소스 파일\connection</Filter>
+    </ClCompile>
+    <ClCompile Include="game_session.cpp">
+      <Filter>소스 파일\connection</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="game_room.h">
+      <Filter>헤더 파일\connection</Filter>
+    </ClInclude>
+    <ClInclude Include="game_session.h">
+      <Filter>헤더 파일\connection</Filter>
+    </ClInclude>
+    <ClInclude Include="manage_server.h">
+      <Filter>헤더 파일\connection</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
