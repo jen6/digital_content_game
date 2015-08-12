@@ -47,5 +47,8 @@
     <ClInclude Include="manage_server.h">
       <Filter>헤더 파일\connection</Filter>
     </ClInclude>
+    <ClInclude Include="ThreadPool.h">
+      <Filter>소스 파일\threadpool</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

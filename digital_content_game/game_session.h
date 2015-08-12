@@ -15,6 +15,7 @@ class game_session
 {
 public:
 	static session_ptr create(asio::io_service&);
+	asio::ip::tcp::socket& socket();
 	
 	~game_session();
 private:

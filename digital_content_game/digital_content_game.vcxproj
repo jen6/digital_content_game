@@ -89,6 +89,7 @@
     <ClInclude Include="game_room.h" />
     <ClInclude Include="game_session.h" />
     <ClInclude Include="manage_server.h" />
+    <ClInclude Include="ThreadPool.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
