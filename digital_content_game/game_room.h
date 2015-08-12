@@ -13,9 +13,11 @@ class game_room
 {
 public:
 	game_room(asio::io_service&, unsigned short);
+		
 	~game_room();
 private:
 	void start_accept();
+	void handle_accept(session_ptr, const boost::system::error_code&);
 	asio::ip::tcp::acceptor _acceptor;
 	std::vector<session_ptr> users;
 };
