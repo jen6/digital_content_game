@@ -48,10 +48,17 @@ void game_session::handler(const boost::system::error_code & error,  std::size_t
 {
 	if (!error)
 	{
-		std::cout << data_.c_array() << std::endl;
+		char a[4];
+		int body_len;
+		std::memcpy(a, data_.c_array(), 4);
+		body_len = std::atoi(a);
+		std::cout << "len : " << body_len << std::endl;
+		char * pt = data_.c_array() + 4 + body_len;
+		*pt = 0;
+		std::cout << data_.c_array()+ 4 << std::endl;
 		asio::async_write(
 			_socket, 
-			asio::buffer(data_, data_.size()),
+			asio::buffer(data_.c_array() + 4, body_len),
 			boost::bind(
 				&game_session::handle_write, 
 				this, 

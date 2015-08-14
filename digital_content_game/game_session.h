@@ -31,6 +31,8 @@ private:
 	void handle_write(const boost::system::error_code& error);
 	void handle_read(const boost::system::error_code& error);
 
+	void handler(const boost::system::error_code & error, std::size_t recv_size);
+
 	asio::ip::tcp::socket _socket;
 	boost::array<char, MAX_LENGTH> data_;
 };
