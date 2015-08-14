@@ -7,7 +7,7 @@
 #include "game_session.h"
 
 namespace asio =  boost::asio;
-
+//http://www.boost.org/doc/libs/1_44_0/doc/html/boost_asio/tutorial/tutdaytime7.html
 //게임 방 유저와 커넥션을 여기서 맺어둠
 class game_room
 {

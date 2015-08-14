@@ -5,6 +5,8 @@
 #include <string>
 #include <memory>
 #include <boost/asio.hpp>
+#include <boost/array.hpp>
+#include <boost/bind.hpp>
 
 namespace asio = boost::asio;
 
@@ -17,14 +19,20 @@ class game_session
 	: public std::enable_shared_from_this<game_session>
 {
 public:
-	game_session();
 	static session_ptr create(asio::io_service&);
 	asio::ip::tcp::socket& socket();
-	
+	void start();
+	void send();
 	~game_session();
 private:
+	enum : size_t { MAX_LENGTH = 1024 };
+
 	game_session(asio::io_service&);
+	void handle_write(const boost::system::error_code& error);
+	void handle_read(const boost::system::error_code& error);
+
 	asio::ip::tcp::socket _socket;
+	boost::array<char, MAX_LENGTH> data_;
 };
 
 
