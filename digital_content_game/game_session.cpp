@@ -1,6 +1,6 @@
 #include "game_session.h"
 #include <iostream>
-
+#include <cstdlib>
 session_ptr game_session::create(asio::io_service& _io_service)
 {
 	return session_ptr(new game_session(_io_service));
@@ -13,7 +13,7 @@ asio::ip::tcp::socket & game_session::socket()
 
 void game_session::start()
 {
-	_socket.async_read_some(asio::buffer(data_, MAX_LENGTH),
+	_socket.async_read_some(asio::buffer(msg.data(), MAX_LENGTH),
 		boost::bind(
 			&game_session::handle_read, 
 			this, 
@@ -24,7 +24,7 @@ void game_session::start()
 void game_session::send()
 {
 	_socket.async_write_some(
-		asio::buffer(data_, data_.size()),
+		asio::buffer(msg, data_.size()),
 		boost::bind(
 			&game_session::handle_write,
 			this,
@@ -51,7 +51,7 @@ void game_session::handler(const boost::system::error_code & error,  std::size_t
 		std::cout << data_.c_array() << std::endl;
 		asio::async_write(
 			_socket, 
-			asio::buffer(data_, data_.size()),
+			asio::buffer(data_.c_array(), std::strlen(data_.c_array())),
 			boost::bind(
 				&game_session::handle_write, 
 				this, 
