@@ -31,7 +31,7 @@ private:
 	game_session(asio::io_service&);
 	void handle_write(const boost::system::error_code& error);
 	void handle_read(const boost::system::error_code& error);
-	void handler(const boost::system::error_code& error, std::size_t);
+
 	asio::ip::tcp::socket _socket;
 	boost::array<char, MAX_LENGTH> data_;
 	chat_message msg;
