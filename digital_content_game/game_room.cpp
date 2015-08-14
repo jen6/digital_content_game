@@ -28,6 +28,7 @@ void game_room::handle_accept(session_ptr ptr, const boost::system::error_code& 
 	{
 		std::cout << "session established!" << std::endl;
 		users.push_back(ptr);
+		ptr.get()->start();
 		start_accept();
 	}
 	else {
