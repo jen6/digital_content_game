@@ -7,7 +7,6 @@
 #include <boost/asio.hpp>
 #include <boost/array.hpp>
 #include <boost/bind.hpp>
-#include "test_packet.hpp"
 
 namespace asio = boost::asio;
 
@@ -34,7 +33,6 @@ private:
 
 	asio::ip::tcp::socket _socket;
 	boost::array<char, MAX_LENGTH> data_;
-	chat_message msg;
 };
 
 

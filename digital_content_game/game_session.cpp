@@ -31,20 +31,44 @@ void game_session::send()
 			asio::placeholders::error));
 }
 
+void game_session::handle_read(const boost::system::error_code & error)
+{
+	if (!error) 
+	{
+		_socket.async_read_some(asio::buffer(data_, MAX_LENGTH),
+			boost::bind(
+				&game_session::handler,
+				this,
+				asio::placeholders::error,
+				asio::placeholders::bytes_transferred));
+	}
+}
+
+void game_session::handler(const boost::system::error_code & error,  std::size_t recv_size)
+{
+	if (!error)
+	{
+		std::cout << data_.c_array() << std::endl;
+		asio::async_write(
+			_socket, 
+			asio::buffer(data_, data_.size()),
+			boost::bind(
+				&game_session::handle_write, 
+				this, 
+				asio::placeholders::error));
+	}
+}
+
+
 void game_session::handle_write(const boost::system::error_code& error)
 {
-	if (data_.front()) {
-		_socket.async_write_some(
-			asio::buffer(data_, data_.size()),
+	if (!error) {
+		_socket.async_read_some(asio::buffer(data_, MAX_LENGTH),
 			boost::bind(
 				&game_session::handle_read,
 				this,
 				asio::placeholders::error));
 	}
-	else {
-		std::cout << "fuck!" << std::endl;
-	}
-	data_.fill(0);
 }
 
 game_session::~game_session()
@@ -55,12 +79,3 @@ game_session::game_session(asio::io_service & _io_service) : _socket(_io_service
 {
 }
 
-void game_session::handle_read(const boost::system::error_code & error)
-{
-	_socket.async_read_some(asio::buffer(data_, MAX_LENGTH),
-		boost::bind(
-			&game_session::handle_read,
-			this,
-			asio::placeholders::error));
-	send();
-}

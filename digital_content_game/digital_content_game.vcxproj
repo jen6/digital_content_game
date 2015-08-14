@@ -84,7 +84,6 @@
     <ClCompile Include="game_session.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="manage_server.cpp" />
-    <ClCompile Include="test_packet.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="game_room.h" />

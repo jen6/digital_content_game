@@ -22,9 +22,6 @@
     <Filter Include="헤더 파일\connection">
       <UniqueIdentifier>{e210a48e-b7e9-4244-8631-23ecc126a02c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="소스 파일\test_packet">
-      <UniqueIdentifier>{e3628f8b-02ff-404d-a443-f3bdfeab52c7}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="manage_server.cpp">
@@ -38,9 +35,6 @@
     </ClCompile>
     <ClCompile Include="main.cpp">
       <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="test_packet.hpp">
-      <Filter>소스 파일\test_packet</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
