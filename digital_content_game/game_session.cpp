@@ -44,7 +44,8 @@ void game_session::handle_read(const boost::system::error_code & error)
 	}
 }
 
-void game_session::handler(const boost::system::error_code & error,  std::size_t recv_size)
+//TODO 여기부분 패킷파서 만들기
+void game_session::handler(const boost::system::error_code & error, std::size_t recv_size)
 {
 	if (!error)
 	{
@@ -55,21 +56,19 @@ void game_session::handler(const boost::system::error_code & error,  std::size_t
 		std::cout << "len : " << body_len << std::endl;
 		char * pt = data_.c_array() + 4 + body_len;
 		*pt = 0;
-		std::cout << data_.c_array()+ 4 << std::endl;
+		std::cout << &data_[4] << std::endl;
 		asio::async_write(
-			_socket, 
-			asio::buffer(data_.c_array() + 4, body_len),
+			_socket,
+			asio::buffer(data_, 4 + body_len),
 			boost::bind(
-				&game_session::handle_write, 
-				this, 
+				&game_session::handle_write,
+				this,
 				asio::placeholders::error));
 	}
 }
-
-
 void game_session::handle_write(const boost::system::error_code& error)
 {
-	if (!error) {
+	if (!error){ 
 		_socket.async_read_some(asio::buffer(data_, MAX_LENGTH),
 			boost::bind(
 				&game_session::handle_read,

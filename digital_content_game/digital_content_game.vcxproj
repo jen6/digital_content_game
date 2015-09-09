@@ -43,8 +43,8 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>E:\boost_1_58_0;$(IncludePath)</IncludePath>
-    <LibraryPath>E:\boost_1_58_0\stage\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(VCInstallDir)UnitTest\include;E:\boost_1_58_0;$(IncludePath);</IncludePath>
+    <LibraryPath>$(VCInstallDir)UnitTest\lib;E:\boost_1_58_0\stage\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -84,11 +84,15 @@
     <ClCompile Include="game_session.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="manage_server.cpp" />
+    <ClCompile Include="packet_parser.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="game_room.h" />
     <ClInclude Include="game_session.h" />
     <ClInclude Include="manage_server.h" />
+    <ClInclude Include="packet_parser.h" />
+    <ClInclude Include="packet_structure.h" />
+    <ClInclude Include="singleton.hpp" />
     <ClInclude Include="ThreadPool.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

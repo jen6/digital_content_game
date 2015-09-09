@@ -21,8 +21,8 @@ class game_session
 public:
 	static session_ptr create(asio::io_service&);
 	asio::ip::tcp::socket& socket();
-	void start();
-	void send();
+	void start();		//read write 담당하는 부분
+	void send();		//각 유저에게 전달
 	~game_session();
 private:
 	enum : size_t { MAX_LENGTH = 1024 };
@@ -31,6 +31,7 @@ private:
 	void handle_write(const boost::system::error_code& error);
 	void handle_read(const boost::system::error_code& error);
 
+	//TODO 여기부분 패킷파서 만들기
 	void handler(const boost::system::error_code & error, std::size_t recv_size);
 
 	asio::ip::tcp::socket _socket;
