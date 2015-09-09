@@ -22,11 +22,23 @@
     <Filter Include="헤더 파일\connection">
       <UniqueIdentifier>{e210a48e-b7e9-4244-8631-23ecc126a02c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\packet">
+      <UniqueIdentifier>{13272d0b-fcc8-49aa-bb21-4ab7090917b9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\manage">
+      <UniqueIdentifier>{2bc5525d-be7f-4026-84ef-737951deb23e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\manage">
+      <UniqueIdentifier>{9689c1f3-f77b-4e6e-88d3-8170c7628029}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\packet">
+      <UniqueIdentifier>{b7f07faf-ceae-4a0a-ae4d-58ba9c28b39d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\Util">
+      <UniqueIdentifier>{39a4f259-ff9d-4051-af8e-e309aa67e60d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="manage_server.cpp">
-      <Filter>소스 파일\connection</Filter>
-    </ClCompile>
     <ClCompile Include="game_room.cpp">
       <Filter>소스 파일\connection</Filter>
     </ClCompile>
@@ -36,6 +48,12 @@
     <ClCompile Include="main.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="packet_parser.cpp">
+      <Filter>소스 파일\packet</Filter>
+    </ClCompile>
+    <ClCompile Include="manage_server.cpp">
+      <Filter>소스 파일\manage</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="game_room.h">
@@ -44,11 +62,20 @@
     <ClInclude Include="game_session.h">
       <Filter>헤더 파일\connection</Filter>
     </ClInclude>
-    <ClInclude Include="manage_server.h">
-      <Filter>헤더 파일\connection</Filter>
-    </ClInclude>
     <ClInclude Include="ThreadPool.h">
       <Filter>소스 파일\threadpool</Filter>
+    </ClInclude>
+    <ClInclude Include="manage_server.h">
+      <Filter>헤더 파일\manage</Filter>
+    </ClInclude>
+    <ClInclude Include="packet_parser.h">
+      <Filter>헤더 파일\packet</Filter>
+    </ClInclude>
+    <ClInclude Include="packet_structure.h">
+      <Filter>헤더 파일\packet</Filter>
+    </ClInclude>
+    <ClInclude Include="singleton.hpp">
+      <Filter>헤더 파일\Util</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
