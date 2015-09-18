@@ -90,6 +90,7 @@
     <ClInclude Include="game_room.h" />
     <ClInclude Include="game_session.h" />
     <ClInclude Include="manage_server.h" />
+    <ClInclude Include="packet_events.h" />
     <ClInclude Include="packet_parser.h" />
     <ClInclude Include="packet_structure.h" />
     <ClInclude Include="singleton.hpp" />

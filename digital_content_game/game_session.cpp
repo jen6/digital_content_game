@@ -40,7 +40,8 @@ void game_session::handle_read(const boost::system::error_code & error)
 				&game_session::handler,
 				this,
 				asio::placeholders::error,
-				asio::placeholders::bytes_transferred));
+				asio::placeholders::
+				bytes_transferred));
 	}
 }
 
