@@ -11,7 +11,7 @@ namespace Packet {
 
 	//자료형과 제한사항
 	using UINT = unsigned int;
-	enum : unsigned int { HEADER_LEN = 8 ,MAX_LEN = 1024 };
+	enum : unsigned int { HEADER_LEN = 8, MAX_BODY_LEN = 1016 ,MAX_LEN = 1024 };
 
 	struct Header 
 	{
@@ -50,6 +50,33 @@ namespace Packet {
 			ar& x, y;
 			ar& damage;
 		}
+	};
+
+	class Packet {
+	public:
+		char * data()
+		{
+			return _data.data();
+		}
+		const char * data() const
+		{
+			return _data.data();
+		}
+		const char * get_body() const
+		{
+			return _data.data() + HEADER_LEN;
+		}
+		void set_size(UINT size)
+		{
+			_size = size;
+			if (_size > MAX_BODY_LEN)
+			{
+				_size = MAX_BODY_LEN;
+			}
+		}
+	private:
+		boost::array<char, MAX_LEN> _data;
+		UINT _size = 0;
 	};
 }
 
