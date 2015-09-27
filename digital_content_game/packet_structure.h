@@ -40,18 +40,26 @@ namespace Packet {
 		UINT _size = 0;
 	};
 
-	class Header 
+	class Header
 	{
 	public:
 		UINT packet_len;	//packet 전체 길이
 		PACKET_EVENT pe;	//packet evnet구별
-		virtual Packet make_packet() = 0; //packet 만들기
-		Header() {}
+	};
+
+	class Body_interface 
+	{
+	public:
+		Body_interface() {}
+		virtual ~Body_interface() {};
+		virtual Packet Make_packet() = 0; //packet 만들기
+		virtual void Send() = 0;
 	protected:
 		PACKET_EVENT event = PACKET_EVENT::GAME_START;
 	};
 
-	class InfoBody : public Header
+
+	class InfoBody : public Body_interface, Header
 	{
 	public:
 		InfoBody() 
@@ -71,7 +79,7 @@ namespace Packet {
 		}
 	};
 
-	class StateBody : public Header
+	class StateBody : public Body_interface, Header
 	{
 		StateBody()
 		{

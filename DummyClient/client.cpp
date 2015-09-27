@@ -16,12 +16,12 @@ void client::connect()
 void client::send()
 {
 	boost::asio::async_write(_socket,
-		boost::asio::buffer(msg_queue.front()), msg_queue.front().length();
-		)
+		boost::asio::buffer(msg_queue.front()), msg_queue.front().length());
 }
 
 void client::dotest()
 {
+	
 }
 
 //client::client()
