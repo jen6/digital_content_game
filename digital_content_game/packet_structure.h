@@ -90,7 +90,6 @@ namespace Packet {
 		UINT object_idx;
 		UINT x, y;
 		UINT damage;
-		const PACKET_EVENT evnt = PACKET_EVENT::OBJECT_STATECH;
 
 		friend class boost::serialization::access;
 
