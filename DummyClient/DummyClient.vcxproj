@@ -80,6 +80,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\digital_content_game\packet.h" />
     <ClInclude Include="..\digital_content_game\packet_events.h" />
     <ClInclude Include="..\digital_content_game\packet_structure.h" />
     <ClInclude Include="client.h" />

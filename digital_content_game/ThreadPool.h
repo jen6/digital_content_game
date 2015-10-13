@@ -10,9 +10,12 @@
 #include <functional>
 #include <stdexcept>
 
+class ThreadPool;
+
+using ThreadPoolPtr = std::shared_ptr<ThreadPool>;
 
 
-class ThreadPool {
+class ThreadPool{
 public:
 	ThreadPool(size_t);
 	template<class F, class... Args>

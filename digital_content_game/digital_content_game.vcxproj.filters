@@ -37,29 +37,32 @@
     <Filter Include="헤더 파일\Util">
       <UniqueIdentifier>{39a4f259-ff9d-4051-af8e-e309aa67e60d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\logic">
+      <UniqueIdentifier>{1422125f-a6a3-41e9-9ebe-f475b777c69b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\logic">
+      <UniqueIdentifier>{5c51d6a1-92b6-45dd-a85d-7ee2e252bc15}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="game_room.cpp">
       <Filter>소스 파일\connection</Filter>
     </ClCompile>
-    <ClCompile Include="game_session.cpp">
-      <Filter>소스 파일\connection</Filter>
-    </ClCompile>
     <ClCompile Include="main.cpp">
       <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="packet_parser.cpp">
-      <Filter>소스 파일\packet</Filter>
     </ClCompile>
     <ClCompile Include="manage_server.cpp">
       <Filter>소스 파일\manage</Filter>
     </ClCompile>
+    <ClCompile Include="game_logic.cpp">
+      <Filter>소스 파일\logic</Filter>
+    </ClCompile>
+    <ClCompile Include="packet_parser.cpp">
+      <Filter>소스 파일\packet</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="game_room.h">
-      <Filter>헤더 파일\connection</Filter>
-    </ClInclude>
-    <ClInclude Include="game_session.h">
       <Filter>헤더 파일\connection</Filter>
     </ClInclude>
     <ClInclude Include="ThreadPool.h">
@@ -68,9 +71,6 @@
     <ClInclude Include="manage_server.h">
       <Filter>헤더 파일\manage</Filter>
     </ClInclude>
-    <ClInclude Include="packet_parser.h">
-      <Filter>헤더 파일\packet</Filter>
-    </ClInclude>
     <ClInclude Include="packet_structure.h">
       <Filter>헤더 파일\packet</Filter>
     </ClInclude>
@@ -78,6 +78,15 @@
       <Filter>헤더 파일\Util</Filter>
     </ClInclude>
     <ClInclude Include="packet_events.h">
+      <Filter>헤더 파일\packet</Filter>
+    </ClInclude>
+    <ClInclude Include="packet.h">
+      <Filter>헤더 파일\packet</Filter>
+    </ClInclude>
+    <ClInclude Include="game_logic.h">
+      <Filter>헤더 파일\logic</Filter>
+    </ClInclude>
+    <ClInclude Include="packet_parser.h">
       <Filter>헤더 파일\packet</Filter>
     </ClInclude>
   </ItemGroup>

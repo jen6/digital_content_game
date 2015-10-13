@@ -3,7 +3,8 @@
 
 namespace Packet
 {
-	enum class PACKET_EVENT : unsigned int
+	using UINT = unsigned int;
+	enum class PACKET_EVENT : UINT
 	{
 		GAME_START = 0,
 
@@ -11,6 +12,7 @@ namespace Packet
 
 		OBJECT_STATECH, //오브젝트 스텟변경
 						//이 안에 이동 멈춤 공격 스킬 등등 상태 넣기
+		TESTER,
 	};
 
 	enum class GAME_INFO : unsigned int

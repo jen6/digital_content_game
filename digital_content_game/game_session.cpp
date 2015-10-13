@@ -1,9 +1,9 @@
 #include "game_session.h"
 #include <iostream>
 
-session_ptr game_session::create(asio::io_service& _io_service)
+session_ptr game_session::create(asio::io_service& _io_service, game_room& room)
 {
-	return session_ptr(new game_session(_io_service));
+	return session_ptr(new game_session(_io_service, room));
 }
 
 asio::ip::tcp::socket & game_session::socket()
@@ -21,14 +21,19 @@ void game_session::start()
 			));
 }
 
-void game_session::send()
+void game_session::send(Packet::packet_ptr p)
 {
 	_socket.async_write_some(
-		asio::buffer(data_, data_.size()),
+		asio::buffer(p.get()->data(), p.get()->length()),
 		boost::bind(
 			&game_session::handle_write,
 			this,
 			asio::placeholders::error));
+}
+
+void game_session::broadcast(Packet::packet_ptr p)
+{
+	_game_room.broadcast(p);
 }
 
 void game_session::handle_read(const boost::system::error_code & error)
@@ -49,22 +54,17 @@ void game_session::handler(const boost::system::error_code & error, std::size_t 
 {
 	if (!error)
 	{
-		char a[4];
-		int body_len;
-		std::memcpy(a, data_.c_array(), 4);
-		body_len = std::atoi(a);
-		std::cout << "len : " << body_len << std::endl;
-		char * pt = data_.c_array() + 4 + body_len;
-		*pt = 0;
-		std::cout << &data_[4] << std::endl;
-		asio::async_write(
-			_socket,
-			asio::buffer(data_, 4 + body_len),
-			boost::bind(
-				&game_session::handle_write,
-				this,
-				asio::placeholders::error));
+		boost::array<char, 1024> buf(data_);
+		auto ptr = Packet::Packet(buf).shared_from_this();
+		std::function<Packet::packet_ptr()> task(std::bind(&Packet::Parse, ptr));
+		_game_room.PassTask(task);
 	}
+	_socket.async_read_some(asio::buffer(data_, MAX_LENGTH),
+		boost::bind(
+			&game_session::handle_read,
+			this,
+			asio::placeholders::error
+			));
 }
 void game_session::handle_write(const boost::system::error_code& error)
 {
@@ -81,7 +81,7 @@ game_session::~game_session()
 {
 }
 
-game_session::game_session(asio::io_service & _io_service) : _socket(_io_service)
+game_session::game_session(asio::io_service & _io_service, game_room& room) : _socket(_io_service), _game_room(room)
 {
 }
 

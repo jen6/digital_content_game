@@ -5,6 +5,7 @@
 #include <string>
 #include <deque>
 #include "../digital_content_game/packet_structure.h"
+#include "../digital_content_game/packet.h"
 
 
 using namespace boost::asio::ip;
@@ -20,7 +21,7 @@ private:
 	tcp::endpoint _end_point;
 	tcp::resolver::iterator endpoint_iterator;
 	tcp::socket _socket;
-	std::deque<std::string> msg_queue;
+	std::deque<shared_Packet> msg_queue;
 	void connect();
 	void send();
 	void read();
