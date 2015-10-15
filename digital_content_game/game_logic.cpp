@@ -8,6 +8,6 @@ namespace game_logic
 		Packet::test t;
 		t.t = 999;
 		auto pack = t.Make_packet();
-		return pack.shared_from_this();
+		return pack;
 	}
 }

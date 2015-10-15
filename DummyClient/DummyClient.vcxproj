@@ -80,14 +80,16 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\digital_content_game\packet.h" />
-    <ClInclude Include="..\digital_content_game\packet_events.h" />
-    <ClInclude Include="..\digital_content_game\packet_structure.h" />
     <ClInclude Include="client.h" />
+    <ClInclude Include="packet\packet.h" />
+    <ClInclude Include="packet\packet_events.h" />
+    <ClInclude Include="packet\packet_parser.h" />
+    <ClInclude Include="packet\packet_structure.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="client.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="packet\packet_parser.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

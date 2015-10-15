@@ -1,33 +1,31 @@
 #pragma once
 #include <boost\asio.hpp>
 #include <boost\bind.hpp>
+#include <boost\function.hpp>
 #include <boost\shared_ptr.hpp>
 #include <string>
+#include "packet/packet.h"
 #include <deque>
-#include "../digital_content_game/packet_structure.h"
-#include "../digital_content_game/packet.h"
+#include <string>
+
 
 
 using namespace boost::asio::ip;
 namespace asio = boost::asio;
 
-using shared_Packet = boost::shared_ptr<Packet::Packet>;
 
 class client
 {
 private:
-	boost::asio::io_service _io_service;
-	tcp::resolver _resolver;
-	tcp::endpoint _end_point;
-	tcp::resolver::iterator endpoint_iterator;
+	boost::asio::io_service& _io_service;
 	tcp::socket _socket;
-	std::deque<shared_Packet> msg_queue;
-	void connect();
-	void send();
+	std::deque<Packet::packet_ptr> msg_queue;
+	void connect(tcp::resolver::iterator );
 	void read();
 	void dotest();
 public:
-	client(std::string ip, std::string port);
+	client(asio::io_service& , tcp::resolver::iterator );
+	void send(Packet::packet_ptr& );
 	~client();
 };
 

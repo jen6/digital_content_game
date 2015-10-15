@@ -47,8 +47,16 @@ void game_room::broadcast(Packet::packet_ptr p)
 void game_room::PassTask(std::function<Packet::packet_ptr()> task)
 {
 	auto packet_fut = pool.get()->enqueue(task);
+	packet_fut.wait();
 	auto packet = packet_fut.get();
-	broadcast(packet);
+	if (packet)
+	{
+		broadcast(packet);
+	}
+	else
+	{
+		assert("fuck!");
+	}
 }
 
 
@@ -107,7 +115,8 @@ void game_session::handler(const boost::system::error_code & error, std::size_t 
 	if (!error)
 	{
 		boost::array<char, 1024> buf(data_);
-		auto ptr = Packet::Packet(buf).shared_from_this();
+		std::cout << buf.data() << std::endl;
+		auto ptr = std::make_shared<Packet::Packet>(buf);
 		std::function<Packet::packet_ptr()> task(std::bind(&Packet::Parse, ptr));
 		_game_room.PassTask(task);
 	}

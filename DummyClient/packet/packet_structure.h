@@ -80,7 +80,7 @@ namespace Packet {
 	public:
 		Body_interface() {}
 		virtual ~Body_interface() {};
-		virtual void Make_Body(const char * packet_body, UINT len) = 0;
+		virtual void Make_Body(const char * packet_body) = 0;
 		virtual packet_ptr Make_packet() = 0; //packet ¸¸µé±â
 	};
 
@@ -107,15 +107,12 @@ namespace Packet {
 			boost::archive::text_oarchive oa(ss, boost::archive::no_header);
 			oa << const_cast<const test &>(*this);
 			std::string s = ss.str();
+			std::cout << s << std::endl;
 			return std::make_shared<Packet>(packet_event, s.c_str(), s.length());
 		}
 
-		virtual void Make_Body(const char * packet_body, UINT len) {
-			boost::array<char, 1024> buf;
-			std::memcpy(buf.data(), packet_body, len);
-			buf[len] = 0;
-			std::cout << buf.data() << std::endl;
-			std::stringstream ss(buf.data());
+		virtual void Make_Body(const char * packet_body) {
+			std::stringstream ss(packet_body);
 			boost::archive::text_iarchive ia(ss, boost::archive::no_header);
 			ia >> *this;
 		}

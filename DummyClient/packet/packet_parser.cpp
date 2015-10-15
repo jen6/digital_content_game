@@ -1,7 +1,7 @@
 #include "packet_parser.h"
 namespace Packet 
 {
-	packet_ptr Parse(packet_ptr p)
+	void Parse(packet_ptr p)
 	{
 		UINT length, event;
 		char * data_ptr = p.get()->data();
@@ -10,12 +10,12 @@ namespace Packet
 		Body_interface * ptr;
 		packet_ptr ret;
 
-		switch (event)
+		switch (static_cast<PACKET_EVENT>(event))
 		{
-		case static_cast<UINT>(PACKET_EVENT::TESTER):
+		case PACKET_EVENT::TESTER:
 			ptr = new test();
-			ptr->Make_Body(data_ptr + HEADER_LEN, length);
-			ret = game_logic::do_work(std::shared_ptr<test>(dynamic_cast<test*>(ptr)));
+			ptr->Make_Body(data_ptr + HEADER_LEN);
+			std::cout << "recved t : " << dynamic_cast<test*>(ptr)->t << std::endl;
 			break;
 			//case PACKET_EVENT::LOAD_INFO:
 			//	InfoBody body(length, event);
@@ -24,10 +24,8 @@ namespace Packet
 			//	StateBody body(length, event);
 			//	break;
 		default:
-			std::cout << "no match" << std::endl;
-			std::cout << "event : " << event << ",  tester : " << static_cast<UINT>(PACKET_EVENT::TESTER) << std::endl;
+			std::cout << " no match" << std::endl;
 			break;
 		}
-		return ret;
 	}
 }

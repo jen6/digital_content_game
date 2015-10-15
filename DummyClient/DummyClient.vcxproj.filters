@@ -14,20 +14,26 @@
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
     <Filter Include="헤더 파일\packet">
-      <UniqueIdentifier>{c3048604-204c-4cbf-9a8d-d577e84c7b79}</UniqueIdentifier>
+      <UniqueIdentifier>{a023ca30-6f52-43ef-ac0b-b994575ab86a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\packet">
+      <UniqueIdentifier>{667426db-5a86-4082-92cb-53aec89a06a0}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="client.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="..\digital_content_game\packet_structure.h">
+    <ClInclude Include="packet\packet.h">
       <Filter>헤더 파일\packet</Filter>
     </ClInclude>
-    <ClInclude Include="..\digital_content_game\packet_events.h">
+    <ClInclude Include="packet\packet_events.h">
       <Filter>헤더 파일\packet</Filter>
     </ClInclude>
-    <ClInclude Include="..\digital_content_game\packet.h">
+    <ClInclude Include="packet\packet_parser.h">
+      <Filter>헤더 파일\packet</Filter>
+    </ClInclude>
+    <ClInclude Include="packet\packet_structure.h">
       <Filter>헤더 파일\packet</Filter>
     </ClInclude>
   </ItemGroup>
@@ -37,6 +43,9 @@
     </ClCompile>
     <ClCompile Include="main.cpp">
       <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="packet\packet_parser.cpp">
+      <Filter>소스 파일\packet</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
