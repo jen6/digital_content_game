@@ -1,11 +1,13 @@
 #pragma once
 #include <cstdlib>
 #include <sstream>
-#include <boost/array.hpp>
 #include <memory>
+
+#include <boost/array.hpp>
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/serialization/access.hpp>
+
 #include "packet_events.h"
 
 namespace Packet {
@@ -21,7 +23,9 @@ namespace Packet {
 
 	};
 
-	class Packet : public std::enable_shared_from_this<Packet> {
+	class Packet 
+		: public std::enable_shared_from_this<Packet> 
+	{
 	public:
 		Packet() {}
 		Packet(const Packet& it) { _data = it._data; _len = it._len; }
@@ -50,21 +54,11 @@ namespace Packet {
 		{
 			return _len;
 		}
-		//TODO 나중에 필요하면 막상 코드 써보니 굳이 필요 x
-		//void set_size(UINT size)
-		//{
-		//	_size = size;
-		//	if (_size > MAX_BODY_LEN)
-		//	{
-		//		_size = MAX_BODY_LEN;
-		//	}
-		//}
+
 	private:
 		boost::array<char, MAX_LEN> _data;
 		size_t _len = 0;
 	};
-
-	//TODO 생성자 안쓰는 거에다가 delete붙여놓기
 
 	class Header
 	{

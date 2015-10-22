@@ -43,6 +43,15 @@
     <Filter Include="헤더 파일\logic">
       <UniqueIdentifier>{5c51d6a1-92b6-45dd-a85d-7ee2e252bc15}</UniqueIdentifier>
     </Filter>
+    <Filter Include="헤더 파일\sqxx">
+      <UniqueIdentifier>{83755897-9ec3-4ac9-b11f-ac483c9ddb97}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\sqxx">
+      <UniqueIdentifier>{8c8c79fb-e79f-4ef6-8d2c-f208cab6f5a0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\sqxx\callable">
+      <UniqueIdentifier>{55d0a751-dcda-4d2d-ac35-63a21c17a785}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="game_room.cpp">
@@ -59,6 +68,45 @@
     </ClCompile>
     <ClCompile Include="packet_parser.cpp">
       <Filter>소스 파일\packet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sqxx\backup.cpp">
+      <Filter>소스 파일\sqxx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sqxx\blob.cpp">
+      <Filter>소스 파일\sqxx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sqxx\column.cpp">
+      <Filter>소스 파일\sqxx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sqxx\config.cpp">
+      <Filter>소스 파일\sqxx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sqxx\connection.cpp">
+      <Filter>소스 파일\sqxx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sqxx\context.cpp">
+      <Filter>소스 파일\sqxx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sqxx\error.cpp">
+      <Filter>소스 파일\sqxx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sqxx\function.cpp">
+      <Filter>소스 파일\sqxx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sqxx\global.cpp">
+      <Filter>소스 파일\sqxx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sqxx\parameter.cpp">
+      <Filter>소스 파일\sqxx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sqxx\sqxx.cpp">
+      <Filter>소스 파일\sqxx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sqxx\statement.cpp">
+      <Filter>소스 파일\sqxx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sqxx\value.cpp">
+      <Filter>소스 파일\sqxx</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -86,8 +134,56 @@
     <ClInclude Include="game_logic.h">
       <Filter>헤더 파일\logic</Filter>
     </ClInclude>
-    <ClInclude Include="packet_parser.h">
+    <ClInclude Include="packet_parser.hpp">
       <Filter>헤더 파일\packet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sqxx\backup.hpp">
+      <Filter>헤더 파일\sqxx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sqxx\blob.hpp">
+      <Filter>헤더 파일\sqxx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sqxx\column.hpp">
+      <Filter>헤더 파일\sqxx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sqxx\config.hpp">
+      <Filter>헤더 파일\sqxx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sqxx\connection.hpp">
+      <Filter>헤더 파일\sqxx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sqxx\context.hpp">
+      <Filter>헤더 파일\sqxx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sqxx\datatypes.hpp">
+      <Filter>헤더 파일\sqxx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sqxx\error.hpp">
+      <Filter>헤더 파일\sqxx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sqxx\function.hpp">
+      <Filter>헤더 파일\sqxx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sqxx\global.hpp">
+      <Filter>헤더 파일\sqxx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sqxx\parameter.hpp">
+      <Filter>헤더 파일\sqxx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sqxx\sqxx.hpp">
+      <Filter>헤더 파일\sqxx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sqxx\statement.hpp">
+      <Filter>헤더 파일\sqxx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sqxx\value.hpp">
+      <Filter>헤더 파일\sqxx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sqxx\callable\callable.hpp">
+      <Filter>헤더 파일\sqxx\callable</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sqxx\callable\parameter_pack.hpp">
+      <Filter>헤더 파일\sqxx\callable</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

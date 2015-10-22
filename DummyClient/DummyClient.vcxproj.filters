@@ -19,11 +19,14 @@
     <Filter Include="소스 파일\packet">
       <UniqueIdentifier>{667426db-5a86-4082-92cb-53aec89a06a0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="헤더 파일\login">
+      <UniqueIdentifier>{bc11a6f3-5f89-4c5d-bb79-67f2f9e2a27c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\login">
+      <UniqueIdentifier>{261e0f6d-6c5f-41c9-bdda-4723d3b6235a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="client.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="packet\packet.h">
       <Filter>헤더 파일\packet</Filter>
     </ClInclude>
@@ -36,6 +39,18 @@
     <ClInclude Include="packet\packet_structure.h">
       <Filter>헤더 파일\packet</Filter>
     </ClInclude>
+    <ClInclude Include="client.h">
+      <Filter>소스 파일\packet</Filter>
+    </ClInclude>
+    <ClInclude Include="login.h">
+      <Filter>헤더 파일\login</Filter>
+    </ClInclude>
+    <ClInclude Include="base64.h">
+      <Filter>헤더 파일\login</Filter>
+    </ClInclude>
+    <ClInclude Include="sha256.h">
+      <Filter>헤더 파일\login</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="client.cpp">
@@ -47,5 +62,14 @@
     <ClCompile Include="packet\packet_parser.cpp">
       <Filter>소스 파일\packet</Filter>
     </ClCompile>
+    <ClCompile Include="login.cpp">
+      <Filter>소스 파일\login</Filter>
+    </ClCompile>
+    <ClCompile Include="base64.cpp">
+      <Filter>소스 파일\login</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ClassDiagram.cd" />
   </ItemGroup>
 </Project>

@@ -1,6 +1,12 @@
-#include "game_room.h"
 #include <iostream>
+#include "game_room.h"
 
+
+
+room_ptr game_room::create(asio::io_service & io, unsigned short port_num, ThreadPoolPtr tp)
+{
+	return room_ptr(new game_room(io, port_num, tp));
+}
 
 game_room::game_room(asio::io_service &_io_service, unsigned short port_num, ThreadPoolPtr tp)
 	: _acceptor(_io_service, asio::ip::tcp::endpoint(asio::ip::tcp::v4(), port_num)),
@@ -26,6 +32,7 @@ void game_room::handle_accept(session_ptr ptr, const boost::system::error_code& 
 {
 	if (!error)
 	{
+		std::lock_guard<std::mutex> lock(mtx);
 		std::cout << "session established!" << std::endl;
 		users.push_back(ptr);
 		ptr.get()->start();
@@ -55,7 +62,7 @@ void game_room::PassTask(std::function<Packet::packet_ptr()> task)
 	}
 	else
 	{
-		assert("fuck!");
+		std::cout << "fuck" << std::endl;
 	}
 }
 
@@ -117,7 +124,7 @@ void game_session::handler(const boost::system::error_code & error, std::size_t 
 		boost::array<char, 1024> buf(data_);
 		std::cout << buf.data() << std::endl;
 		auto ptr = std::make_shared<Packet::Packet>(buf);
-		std::function<Packet::packet_ptr()> task(std::bind(&Packet::Parse, ptr));
+		std::function<Packet::packet_ptr()> task(std::bind(&Packet::Parse<game_room>, ptr, _game_room.shared_from_this()));
 		_game_room.PassTask(task);
 	}
 	_socket.async_read_some(asio::buffer(data_, MAX_LENGTH),
@@ -135,6 +142,10 @@ void game_session::handle_write(const boost::system::error_code& error)
 				&game_session::handle_read,
 				this,
 				asio::placeholders::error));
+	}
+	else
+	{
+		std::cout << "error in write : " << error.message() << " " << error.value() << std::endl;
 	}
 }
 

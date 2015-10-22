@@ -80,6 +80,19 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\sqxx\backup.cpp" />
+    <ClCompile Include="..\sqxx\blob.cpp" />
+    <ClCompile Include="..\sqxx\column.cpp" />
+    <ClCompile Include="..\sqxx\config.cpp" />
+    <ClCompile Include="..\sqxx\connection.cpp" />
+    <ClCompile Include="..\sqxx\context.cpp" />
+    <ClCompile Include="..\sqxx\error.cpp" />
+    <ClCompile Include="..\sqxx\function.cpp" />
+    <ClCompile Include="..\sqxx\global.cpp" />
+    <ClCompile Include="..\sqxx\parameter.cpp" />
+    <ClCompile Include="..\sqxx\sqxx.cpp" />
+    <ClCompile Include="..\sqxx\statement.cpp" />
+    <ClCompile Include="..\sqxx\value.cpp" />
     <ClCompile Include="game_logic.cpp" />
     <ClCompile Include="game_room.cpp" />
     <ClCompile Include="main.cpp" />
@@ -87,12 +100,28 @@
     <ClCompile Include="packet_parser.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\sqxx\backup.hpp" />
+    <ClInclude Include="..\sqxx\blob.hpp" />
+    <ClInclude Include="..\sqxx\callable\callable.hpp" />
+    <ClInclude Include="..\sqxx\callable\parameter_pack.hpp" />
+    <ClInclude Include="..\sqxx\column.hpp" />
+    <ClInclude Include="..\sqxx\config.hpp" />
+    <ClInclude Include="..\sqxx\connection.hpp" />
+    <ClInclude Include="..\sqxx\context.hpp" />
+    <ClInclude Include="..\sqxx\datatypes.hpp" />
+    <ClInclude Include="..\sqxx\error.hpp" />
+    <ClInclude Include="..\sqxx\function.hpp" />
+    <ClInclude Include="..\sqxx\global.hpp" />
+    <ClInclude Include="..\sqxx\parameter.hpp" />
+    <ClInclude Include="..\sqxx\sqxx.hpp" />
+    <ClInclude Include="..\sqxx\statement.hpp" />
+    <ClInclude Include="..\sqxx\value.hpp" />
     <ClInclude Include="game_logic.h" />
     <ClInclude Include="game_room.h" />
     <ClInclude Include="manage_server.h" />
     <ClInclude Include="packet.h" />
     <ClInclude Include="packet_events.h" />
-    <ClInclude Include="packet_parser.h" />
+    <ClInclude Include="packet_parser.hpp" />
     <ClInclude Include="packet_structure.h" />
     <ClInclude Include="singleton.hpp" />
     <ClInclude Include="ThreadPool.h" />

@@ -1,19 +1,22 @@
 #pragma once
-#include <boost/asio.hpp>
-#include <boost/bind.hpp>
 #include <string>
 #include <memory>
 #include <thread>
 #include <future>
 #include <vector>
 #include <deque>
-#include "ThreadPool.h"
-#include "packet.h"
+#include <mutex>
 
+#include <boost/asio.hpp>
+#include <boost/bind.hpp>
+
+#include "packet.h"
+#include "ThreadPool.h"
 class game_room;
 class game_session;
 
 using session_ptr = std::shared_ptr<game_session>;
+using room_ptr = std::shared_ptr<game_room>;
 
 namespace asio =  boost::asio;
 //http://www.boost.org/doc/libs/1_44_0/doc/html/boost_asio/tutorial/tutdaytime7.html
@@ -37,10 +40,9 @@ private:
 	game_session(asio::io_service&, game_room&);
 	void handle_write(const boost::system::error_code& error);
 	void handle_read(const boost::system::error_code& error);
-
-	//TODO 여기부분 패킷파서 만들기
 	void handler(const boost::system::error_code & error, std::size_t recv_size);
 
+	std::mutex mtx;
 	asio::ip::tcp::socket _socket;
 	boost::array<char, MAX_LENGTH> data_;
 	game_room& _game_room;
@@ -50,15 +52,25 @@ private:
 
 
 //게임 방 유저와 커넥션을 여기서 맺어둠
-class game_room
+class game_room 
+	: public std::enable_shared_from_this<game_room>
 {
 public:
-	game_room() = delete;
-	game_room(asio::io_service&, unsigned short, ThreadPoolPtr);
+	game_room(const game_room &) = delete;
+	game_room& operator=(const game_room &) = delete;
+	~game_room();
+	//일반생성자 복사생성자 복사대입 연산자 삭제
+
+	static room_ptr create(asio::io_service&, unsigned short, ThreadPoolPtr);
+
 	void broadcast(Packet::packet_ptr p); //모든 유저에게 데이터 브로드 케스트
 	void PassTask(std::function<Packet::packet_ptr()> task);
-	~game_room();
+
+	std::mutex mtx;
+
+	friend class game;
 private:
+	game_room(asio::io_service&, unsigned short, ThreadPoolPtr);
 	void start_accept();
 	void handle_accept(session_ptr, const boost::system::error_code&);
 	asio::ip::tcp::acceptor _acceptor;

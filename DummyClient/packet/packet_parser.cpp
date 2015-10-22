@@ -10,6 +10,8 @@ namespace Packet
 		Body_interface * ptr;
 		packet_ptr ret;
 
+		
+		std::cout << "parse" << std::endl;
 		switch (static_cast<PACKET_EVENT>(event))
 		{
 		case PACKET_EVENT::TESTER:
