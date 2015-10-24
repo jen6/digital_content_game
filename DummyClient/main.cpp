@@ -1,7 +1,7 @@
 #include <iostream>
 #include <thread>
 #include <random>
-//#include "client.h"
+#include "client.h"
 #include "login.h"
 
 #define DOLOGINTEST
