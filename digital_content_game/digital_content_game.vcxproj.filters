@@ -197,6 +197,9 @@
     <ClInclude Include="dbmanage.h">
       <Filter>헤더 파일\db</Filter>
     </ClInclude>
+    <ClInclude Include="DbSet.h">
+      <Filter>헤더 파일\db</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="ClassDiagram.cd" />

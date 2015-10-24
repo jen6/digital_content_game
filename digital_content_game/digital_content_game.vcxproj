@@ -118,6 +118,7 @@
     <ClInclude Include="..\sqxx\statement.hpp" />
     <ClInclude Include="..\sqxx\value.hpp" />
     <ClInclude Include="dbmanage.h" />
+    <ClInclude Include="DbSet.h" />
     <ClInclude Include="game_logic.h" />
     <ClInclude Include="game_room.h" />
     <ClInclude Include="manage_server.h" />
