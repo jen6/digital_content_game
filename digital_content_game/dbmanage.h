@@ -1,5 +1,8 @@
 #pragma once
 #include <string>
+#include <iostream>
+
+#include <boost\lexical_cast.hpp>
 
 #include "../sqxx/sqxx.hpp"
 
@@ -46,7 +49,9 @@ namespace DB
 		int Quest;				//11
 		std::string Session;	//12
 
-		void Parse(sqxx::statement st);
+		void Parse(sqxx::statement& st);
+		std::string UpdateSql();
+
 	};
 
 
@@ -57,7 +62,7 @@ namespace DB
 		~DbManager();
 
 		UserDBStruct GetUser(std::string& session);
-		void Update(const UserDBStruct& user);
+		void Update(UserDBStruct& user); 
 
 	private:
 		sqxx::connection dbcon;
