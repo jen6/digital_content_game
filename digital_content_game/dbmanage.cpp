@@ -1,11 +1,14 @@
 #include "dbmanage.h"
+#include <thread>
+#include <chrono>
 
 namespace DB 
 {
 
 	DbManager::DbManager()
 	{
-		dbcon.open(DBFILE, sqxx::OPEN_READWRITE);
+		dbcon.open(DBFILE, sqxx::OPEN_CREATE | sqxx::OPEN_READWRITE);
+		//std::cout << dbcon.filename() << std::endl;
 
 	}
 
@@ -18,9 +21,16 @@ namespace DB
 	{
 		std::string sql = GETUSER_SQL + session;
 		sqxx::statement result = dbcon.run(sql);
+		while (!result.done())
+		{
+			result.next_row();
+		}
+
+		//std::this_thread::sleep_for(std::chrono::milliseconds(50));
+		
 		UserDBStruct * user = new UserDBStruct();
 		try {
-			user->Parse(result);
+			user->Parse(&result);
 		}
 		catch (std::exception& err)
 		{
@@ -36,17 +46,32 @@ namespace DB
 		sqxx::statement state = dbcon.run(sql);
 	}
 
-	void UserDBStruct::Parse(sqxx::statement& st)
+	UserDBStruct & UserDBStruct::operator=(UserDBStruct & user)
 	{
-		Nickname	= st.val<std::string>(DBINDEX::Nickname);
-		Skill		= st.val<std::string>(DBINDEX::Skill);
-		Exp			= st.val<int>(DBINDEX::Exp);
-		PHp			= st.val<int>(DBINDEX::PHp);
-		PAttack		= st.val<int>(DBINDEX::PAttack);
-		PDefence	= st.val<int>(DBINDEX::PDefence);
-		Level		= st.val<int>(DBINDEX::Level);
-		Quest		= st.val<int>(DBINDEX::Quest);
-		Session		= st.val<std::string>(DBINDEX::Session);
+		Nickname = user.Nickname;
+		Skill = user.Skill;
+		Exp = user.Exp;
+		PHp = user.PHp;
+		PAttack = user.PAttack;
+		PDefence = user.PDefence;
+		Level = user.Level;
+		Quest = user.Quest;
+		Session = user.Session;
+		return *this;
+	}
+
+	void UserDBStruct::Parse(sqxx::statement* st)
+	{
+		std::cout << "Id : " << st->val<int>(0) << std::endl;
+		Nickname	= st->val<std::string>(DBINDEX::Nickname);
+		Skill		= st->val<std::string>(DBINDEX::Skill);
+		Exp			= st->val<int>(DBINDEX::Exp);
+		PHp			= st->val<int>(DBINDEX::PHp);
+		PAttack		= st->val<int>(DBINDEX::PAttack);
+		PDefence	= st->val<int>(DBINDEX::PDefence);
+		Level		= st->val<int>(DBINDEX::Level);
+		Quest		= st->val<int>(DBINDEX::Quest);
+		Session		= st->val<std::string>(DBINDEX::Session);
 	}
 	std::string UserDBStruct::UpdateSql()
 	{

@@ -18,7 +18,7 @@ enum open_flags {
 	 OPEN_READWRITE =        0x00000002,  /* Ok for sqlite3_open_v2() */
 	 OPEN_CREATE =           0x00000004,  /* Ok for sqlite3_open_v2() */
 	 //OPEN_DELETEONCLOSE =    0x00000008,  /* VFS only */
-	 //OPEN_EXCLUSIVE =        0x00000010,  /* VFS only */
+	 OPEN_EXCLUSIVE =        0x00000010,  /* VFS only */
 	 //OPEN_AUTOPROXY =        0x00000020,  /* VFS only */
 	 OPEN_URI =              0x00000040,  /* Ok for sqlite3_open_v2() */
 	 OPEN_MEMORY =           0x00000080,  /* Ok for sqlite3_open_v2() */

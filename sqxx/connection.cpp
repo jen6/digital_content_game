@@ -4,13 +4,15 @@
 #include "connection.hpp"
 #include "sqxx.hpp"
 #include "error.hpp"
-#include <sqlite3.h>
+#include "sqlite3.h"
 #include <cstring>
+#include <iostream>
 
 namespace sqxx {
 
 recent_error::recent_error(sqlite3 *handle) : error(sqlite3_errcode(handle), sqlite3_errmsg(handle)) {
 }
+
 
 struct collation_data_t {
 	connection &conn;
@@ -174,6 +176,7 @@ void connection::open(const char *filename, int flags) {
 	int rv;
 	if (!flags)
 		flags = OPEN_READWRITE;
+
 	rv = sqlite3_open_v2(filename, &handle, flags, nullptr);
 	if (rv != SQLITE_OK) {
 		if (handle)
@@ -316,9 +319,10 @@ statement connection::run(const std::string &sql) {
 statement connection::prepare(const char *sql) {
 	int rv;
 	sqlite3_stmt *stmt = nullptr;
-
+	
 	rv = sqlite3_prepare_v2(handle, sql, std::strlen(sql)+1, &stmt, nullptr);
 	if (rv != SQLITE_OK) {
+		std::cout << sqlite3_errmsg(handle) << std::endl;
 		throw static_error(rv);
 	}
 

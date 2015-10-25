@@ -39,6 +39,9 @@ namespace DB
 
 	class UserDBStruct {
 	public:
+		UserDBStruct() = default;
+		~UserDBStruct() = default;
+		UserDBStruct& operator=(UserDBStruct& user);
 		std::string Nickname;	//4
 		std::string Skill;		//5
 		int Exp;				//6
@@ -49,7 +52,7 @@ namespace DB
 		int Quest;				//11
 		std::string Session;	//12
 
-		void Parse(sqxx::statement& st);
+		void Parse(sqxx::statement* st);
 		std::string UpdateSql();
 
 	};
@@ -58,6 +61,7 @@ namespace DB
 	class DbManager
 	{
 	public:
+
 		DbManager();
 		~DbManager();
 

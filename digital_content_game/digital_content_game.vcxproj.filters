@@ -117,6 +117,9 @@
     <ClCompile Include="dbmanage.cpp">
       <Filter>소스 파일\db</Filter>
     </ClCompile>
+    <ClCompile Include="sqlite3.c">
+      <Filter>소스 파일\db</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="game_room.h">
@@ -198,6 +201,12 @@
       <Filter>헤더 파일\db</Filter>
     </ClInclude>
     <ClInclude Include="DbSet.h">
+      <Filter>헤더 파일\db</Filter>
+    </ClInclude>
+    <ClInclude Include="sqlite3.h">
+      <Filter>헤더 파일\db</Filter>
+    </ClInclude>
+    <ClInclude Include="sqlite3ext.h">
       <Filter>헤더 파일\db</Filter>
     </ClInclude>
   </ItemGroup>

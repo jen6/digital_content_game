@@ -19,6 +19,12 @@ statement::~statement() {
 	}
 }
 
+statement & statement::operator=(const statement & st)
+{
+	statement * state = new statement(st.conn, st.handle);
+	return *state;
+}
+
 const char* statement::sql() {
 	return sqlite3_sql(handle);
 }
