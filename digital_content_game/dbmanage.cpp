@@ -5,9 +5,9 @@
 namespace DB 
 {
 
-	DbManager::DbManager()
+	DbManager::DbManager() : db(DBFILE)
 	{
-		dbcon.open(DBFILE, sqxx::OPEN_CREATE | sqxx::OPEN_READWRITE);
+		//dbcon.open(DBFILE, sqxx::OPEN_CREATE | sqxx::OPEN_READWRITE);
 		//std::cout << dbcon.filename() << std::endl;
 
 	}
@@ -19,31 +19,33 @@ namespace DB
 
 	UserDBStruct DbManager::GetUser(std::string & session)
 	{
-		std::string sql = GETUSER_SQL + session;
-		sqxx::statement result = dbcon.run(sql);
-		while (!result.done())
-		{
-			result.next_row();
-		}
 
-		//std::this_thread::sleep_for(std::chrono::milliseconds(50));
-		
-		UserDBStruct * user = new UserDBStruct();
-		try {
-			user->Parse(&result);
-		}
-		catch (std::exception& err)
+		//Nickname, Skill, Exp, PHp, PAttack, PDefence, Level, Quest, LoginSession
+		std::string sql = GETUSER_SQL + "'" + session + "';";
+
+		UserDBStruct user;
+		db << sql.c_str()
+			>> [&](std::string NickName, std::string Skill,
+				int Exp, int PHp, int PAttack, int PDefence, int Level, int Quest,
+				std::string Session)
 		{
-			delete(user);
-			std::cerr << "error in Get User " << err.what() << std::endl;
+			std::cout << NickName << " " << Session << std::endl;
+			user.Nickname = NickName; user.Skill = Skill;
+			user.Exp = Exp; user.PHp = PHp; user.PAttack = PAttack;
+			user.PDefence = PDefence; user.Level = Level; user.Quest = Quest;
+			user.Session = Session;
+		};
+		if (session != user.Session)
+		{
+			throw std::exception("fuck");
 		}
-		return *user;
+		return user;
 	}
 
 	void DbManager::Update(UserDBStruct & user)
 	{
 		std::string sql = user.UpdateSql();
-		sqxx::statement state = dbcon.run(sql);
+		db << sql;
 	}
 
 	UserDBStruct & UserDBStruct::operator=(UserDBStruct & user)
@@ -60,31 +62,19 @@ namespace DB
 		return *this;
 	}
 
-	void UserDBStruct::Parse(sqxx::statement* st)
-	{
-		std::cout << "Id : " << st->val<int>(0) << std::endl;
-		Nickname	= st->val<std::string>(DBINDEX::Nickname);
-		Skill		= st->val<std::string>(DBINDEX::Skill);
-		Exp			= st->val<int>(DBINDEX::Exp);
-		PHp			= st->val<int>(DBINDEX::PHp);
-		PAttack		= st->val<int>(DBINDEX::PAttack);
-		PDefence	= st->val<int>(DBINDEX::PDefence);
-		Level		= st->val<int>(DBINDEX::Level);
-		Quest		= st->val<int>(DBINDEX::Quest);
-		Session		= st->val<std::string>(DBINDEX::Session);
-	}
 	std::string UserDBStruct::UpdateSql()
 	{
 		std::string ret = UPDATE_SQL;
-		ret += TABLENAME + "Nickname" + " = " + Nickname + ", ";
-		ret += TABLENAME + "Skill" + " = " + Skill + ", ";
+		ret += TABLENAME + "Nickname" + " = '" + Nickname + "', ";
+		ret += TABLENAME + "Skill" + " = '" + Skill + "', ";
 		ret += TABLENAME + "Exp" + " = " + boost::lexical_cast<std::string>(Exp) + ", ";
 		ret += TABLENAME + "PHp" + " = " + boost::lexical_cast<std::string>(PHp) + ", ";
 		ret += TABLENAME + "PAttack" + " = " + boost::lexical_cast<std::string>(PDefence) + ", ";
 		ret += TABLENAME + "Level" + " = " + boost::lexical_cast<std::string>(Level) + ", ";
 		ret += TABLENAME + "Quest" + " = " + boost::lexical_cast<std::string>(Quest) + ", ";
-		ret += TABLENAME + "Session" + " = " + Session + " ";
-		ret += "where LoginSession = " + Session;
+		ret += TABLENAME + "LoginSession" + " = '" + Session + "' ";
+		ret += "where LoginSession = '" + Session + "' ;";
+		std::cout << ret << std::endl;
 		return ret;
 	}
 }

@@ -13,9 +13,10 @@ int Level;				//10
 int Quest;				//11
 std::string Session;	//12
 */
-
-const std::string DBFILE = "E:\\Projects\\digital_content_game\\Debug\\user_db.bin";
-const std::string GETUSER_SQL = "select * from UserDb where LoginSession = ";
-const std::string UPDATE_SQL = "update UserDb set ";
-const std::string TABLENAME = "UserDb.";
-//아무래도 이부분을 그냥 만들어주는 함수 하나 작성
+namespace DB {
+	const std::string DBFILE = "E:\\Projects\\digital_content_game\\Debug\\user_db.bin";
+	const std::string GETUSER_SQL = "select Nickname, Skill, Exp, PHp, PAttack, PDefence, Level, Quest, LoginSession from UserDb where LoginSession = ";
+	const std::string UPDATE_SQL = "update UserDb set ";
+	const std::string TABLENAME = "";
+	//아무래도 이부분을 그냥 만들어주는 함수 하나 작성
+}

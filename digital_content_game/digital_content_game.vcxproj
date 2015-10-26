@@ -82,48 +82,23 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\sqxx\backup.cpp" />
-    <ClCompile Include="..\sqxx\blob.cpp" />
-    <ClCompile Include="..\sqxx\column.cpp" />
-    <ClCompile Include="..\sqxx\config.cpp" />
-    <ClCompile Include="..\sqxx\connection.cpp" />
-    <ClCompile Include="..\sqxx\context.cpp" />
-    <ClCompile Include="..\sqxx\error.cpp" />
-    <ClCompile Include="..\sqxx\function.cpp" />
-    <ClCompile Include="..\sqxx\global.cpp" />
-    <ClCompile Include="..\sqxx\parameter.cpp" />
-    <ClCompile Include="..\sqxx\sqxx.cpp" />
-    <ClCompile Include="..\sqxx\statement.cpp" />
-    <ClCompile Include="..\sqxx\value.cpp" />
     <ClCompile Include="dbmanage.cpp" />
     <ClCompile Include="game_logic.cpp" />
     <ClCompile Include="game_room.cpp" />
+    <ClCompile Include="Logger.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="manage_server.cpp" />
     <ClCompile Include="packet_parser.cpp" />
     <ClCompile Include="sqlite3.c" />
+    <ClCompile Include="sqlite_modern_cpp.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\sqxx\backup.hpp" />
-    <ClInclude Include="..\sqxx\blob.hpp" />
-    <ClInclude Include="..\sqxx\callable\callable.hpp" />
-    <ClInclude Include="..\sqxx\callable\parameter_pack.hpp" />
-    <ClInclude Include="..\sqxx\column.hpp" />
-    <ClInclude Include="..\sqxx\config.hpp" />
-    <ClInclude Include="..\sqxx\connection.hpp" />
-    <ClInclude Include="..\sqxx\context.hpp" />
-    <ClInclude Include="..\sqxx\datatypes.hpp" />
-    <ClInclude Include="..\sqxx\error.hpp" />
-    <ClInclude Include="..\sqxx\function.hpp" />
-    <ClInclude Include="..\sqxx\global.hpp" />
-    <ClInclude Include="..\sqxx\parameter.hpp" />
-    <ClInclude Include="..\sqxx\sqxx.hpp" />
-    <ClInclude Include="..\sqxx\statement.hpp" />
-    <ClInclude Include="..\sqxx\value.hpp" />
+    <ClInclude Include="..\sqlite_modern_cpp.h" />
     <ClInclude Include="dbmanage.h" />
     <ClInclude Include="DbSet.h" />
     <ClInclude Include="game_logic.h" />
     <ClInclude Include="game_room.h" />
+    <ClInclude Include="Logger.h" />
     <ClInclude Include="manage_server.h" />
     <ClInclude Include="packet.h" />
     <ClInclude Include="packet_events.h" />

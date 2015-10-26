@@ -4,7 +4,7 @@
 
 #include <boost\lexical_cast.hpp>
 
-#include "../sqxx/sqxx.hpp"
+#include "../sqlite_modern_cpp.h"
 
 #include "DbSet.h"
 
@@ -52,7 +52,7 @@ namespace DB
 		int Quest;				//11
 		std::string Session;	//12
 
-		void Parse(sqxx::statement* st);
+		//void Parse(sqxx::statement* st);
 		std::string UpdateSql();
 
 	};
@@ -69,7 +69,7 @@ namespace DB
 		void Update(UserDBStruct& user); 
 
 	private:
-		sqxx::connection dbcon;
+		sqlite::database db;
 	};
 }
 
