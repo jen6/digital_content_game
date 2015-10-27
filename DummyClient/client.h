@@ -23,8 +23,10 @@ private:
 	boost::asio::io_service& _io_service;
 	tcp::socket _socket;
 	std::deque<Packet::packet_ptr> msg_queue;
-	void connect(tcp::resolver::iterator );
-	void read();
+	void connect(const boost::system::error_code& error);
+	void read(const boost::system::error_code & error);
+	void handle_send(const boost::system::error_code& error);
+	void handle_read_header(const boost::system::error_code& error);
 	void handle_read(Packet::packet_ptr p, size_t byte_transfer, const boost::system::error_code & error);
 	void dotest();
 public:

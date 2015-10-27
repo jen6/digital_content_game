@@ -9,7 +9,7 @@ room_ptr game_room::create(asio::io_service & io, unsigned short port_num, Threa
 }
 
 game_room::game_room(asio::io_service &_io_service, unsigned short port_num, ThreadPoolPtr tp)
-	: _acceptor(_io_service, asio::ip::tcp::endpoint(asio::ip::tcp::v4(), port_num)),
+	: io(_io_service), st(io), _acceptor(_io_service, asio::ip::tcp::endpoint(asio::ip::tcp::v4(), port_num)),
 	pool(tp)
 {
 	start_accept();
@@ -23,7 +23,7 @@ game_room::~game_room()
 
 void game_room::start_accept()
 {
-	session_ptr ptr = game_session::create(_acceptor.get_io_service(), *this);
+	session_ptr ptr = game_session::create(_acceptor.get_io_service(), st, *this);
 	_acceptor.async_accept(ptr.get()->socket(),
 		boost::bind(&game_room::handle_accept, this, ptr, asio::placeholders::error));
 }
@@ -68,9 +68,9 @@ void game_room::PassTask(std::function<Packet::packet_ptr()> task)
 
 
 
-session_ptr game_session::create(asio::io_service& _io_service, game_room& room)
+session_ptr game_session::create(asio::io_service& _io_service, asio::io_service::strand& strand, game_room& room)
 {
-	return session_ptr(new game_session(_io_service, room));
+	return session_ptr(new game_session(_io_service, strand, room));
 }
 
 asio::ip::tcp::socket & game_session::socket()
@@ -105,14 +105,25 @@ void game_session::broadcast(Packet::packet_ptr p)
 
 void game_session::handle_read(const boost::system::error_code & error)
 {
+	static int cnt = 0;
+	static int ecnt = 0;
+	
 	if (!error)
 	{
+		cnt += 1;
+		std::cout << "recv cnt : " << cnt << std::endl;
 		_socket.async_read_some(asio::buffer(data_, MAX_LENGTH),
 			boost::bind(
 				&game_session::handler,
 				this,
 				asio::placeholders::error,
 				asio::placeholders::bytes_transferred));
+	}
+	else
+	{
+		ecnt += 1;
+		std::cout << "recv error cnt : " << cnt << std::endl;
+		std::cout << error.value() << std::endl;
 	}
 }
 
@@ -153,8 +164,9 @@ game_session::~game_session()
 {
 }
 
-game_session::game_session(asio::io_service & _io_service, game_room& room) : _socket(_io_service), _game_room(room)
+game_session::game_session(asio::io_service & _io_service, asio::io_service::strand& strand, game_room& room) : _socket(_io_service), _game_room(room), st(strand)
 {
+
 }
 
 

@@ -28,7 +28,7 @@ class game_session
 	: public std::enable_shared_from_this<game_session>
 {
 public:
-	static session_ptr create(asio::io_service&, game_room&);
+	static session_ptr create(asio::io_service&, asio::io_service::strand&, game_room&);
 	asio::ip::tcp::socket& socket();
 	void start();		//read write 담당하는 부분
 	void send(Packet::packet_ptr p);		//각 유저에게 전달
@@ -37,13 +37,15 @@ public:
 private:
 	enum : size_t { MAX_LENGTH = 1024 };
 
-	game_session(asio::io_service&, game_room&);
+	game_session(asio::io_service&, asio::io_service::strand& , game_room&);
 	void handle_write(const boost::system::error_code& error);
 	void handle_read(const boost::system::error_code& error);
 	void handler(const boost::system::error_code & error, std::size_t recv_size);
 
 	std::mutex mtx;
 	asio::ip::tcp::socket _socket;
+	asio::io_service::strand& st;
+
 	boost::array<char, MAX_LENGTH> data_;
 	game_room& _game_room;
 };
@@ -73,6 +75,9 @@ private:
 	game_room(asio::io_service&, unsigned short, ThreadPoolPtr);
 	void start_accept();
 	void handle_accept(session_ptr, const boost::system::error_code&);
+
+	asio::io_service& io;
+	asio::io_service::strand st;
 	asio::ip::tcp::acceptor _acceptor;
 	std::vector<session_ptr> users;	//유저 목록
 	std::deque<Packet::packet_ptr> msg_queue;

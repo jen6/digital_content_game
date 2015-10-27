@@ -4,12 +4,14 @@
 #include "client.h"
 #include "login.h"
 
-#define DOLOGINTEST
+//#define DOLOGINTEST
 
 int main()
 {
+#ifdef DOLOGINTEST
 	std::string str = Login::DoLogin("googler", "googleisbest123");
 	std::cout << str << std::endl;
+#endif
 
 #ifndef DOLOGINTEST
 	try {
