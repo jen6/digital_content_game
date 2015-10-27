@@ -44,7 +44,7 @@ private:
 
 	std::mutex mtx;
 	asio::ip::tcp::socket _socket;
-	boost::array<char, MAX_LENGTH> data_;
+	boost::array<wchar_t, MAX_LENGTH> data_;
 	game_room& _game_room;
 };
 

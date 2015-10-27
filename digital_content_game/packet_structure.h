@@ -6,6 +6,10 @@
 #include <boost/array.hpp>
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/archive/text_oarchive.hpp>
+
+#include <boost/archive/text_wiarchive.hpp>
+#include <boost/archive/text_woarchive.hpp>
+
 #include <boost/serialization/access.hpp>
 
 #include "packet_events.h"
@@ -29,23 +33,23 @@ namespace Packet {
 	public:
 		Packet() {}
 		Packet(const Packet& it) { _data = it._data; _len = it._len; }
-		Packet(boost::array<char, 1024>& data) : _data(data) {}
-		Packet(PACKET_EVENT pevent, const char * data, UINT len)
+		Packet(boost::array<wchar_t, 1024>& data) : _data(data) {}
+		Packet(PACKET_EVENT pevent, const wchar_t * data, UINT len)
 		{
 			std::memcpy(_data.data(), &pevent, sizeof(UINT));
 			std::memcpy(_data.data()+4, &len, sizeof(UINT));
 			std::memcpy(_data.data() + HEADER_LEN, data, len);
 			_len = HEADER_LEN + len;
 		}
-		char * data()
+		wchar_t * data()
 		{
 			return _data.data();
 		}
-		const char * data() const
+		const wchar_t * data() const
 		{
 			return _data.data();
 		}
-		const char * get_body() const
+		const wchar_t * get_body() const
 		{
 			return _data.data() + HEADER_LEN;
 		}
@@ -56,7 +60,7 @@ namespace Packet {
 		}
 
 	private:
-		boost::array<char, MAX_LEN> _data;
+		boost::array<wchar_t, MAX_LEN> _data;
 		size_t _len = 0;
 	};
 
@@ -74,7 +78,7 @@ namespace Packet {
 	public:
 		Body_interface() {}
 		virtual ~Body_interface() {};
-		virtual void Make_Body(const char * packet_body, UINT len) = 0;
+		virtual void Make_Body(const wchar_t * packet_body, UINT len) = 0;
 		virtual packet_ptr Make_packet() = 0; //packet ¸¸µé±â
 	};
 
@@ -97,20 +101,20 @@ namespace Packet {
 
 		virtual packet_ptr Make_packet()
 		{
-			std::stringstream ss;
-			boost::archive::text_oarchive oa(ss, boost::archive::no_header);
+			std::wstringstream ss;
+			boost::archive::text_woarchive oa(ss, boost::archive::no_header);
 			oa << const_cast<const test &>(*this);
-			std::string s = ss.str();
+			std::wstring s = ss.str();
 			return std::make_shared<Packet>(packet_event, s.c_str(), s.length());
 		}
 
-		virtual void Make_Body(const char * packet_body, UINT len) {
-			boost::array<char, 1024> buf;
+		virtual void Make_Body(const wchar_t * packet_body, UINT len) {
+			boost::array<wchar_t, 1024> buf;
 			std::memcpy(buf.data(), packet_body, len);
 			buf[len] = 0;
 			std::cout << buf.data() << std::endl;
-			std::stringstream ss(buf.data());
-			boost::archive::text_iarchive ia(ss, boost::archive::no_header);
+			std::wstringstream ss(buf.data());
+			boost::archive::text_wiarchive ia(ss, boost::archive::no_header);
 			ia >> *this;
 		}
 	};

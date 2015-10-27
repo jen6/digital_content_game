@@ -121,7 +121,7 @@ void game_session::handler(const boost::system::error_code & error, std::size_t 
 {
 	if (!error)
 	{
-		boost::array<char, 1024> buf(data_);
+		boost::array<wchar_t, 1024> buf(data_);
 		std::cout << buf.data() << std::endl;
 		auto ptr = std::make_shared<Packet::Packet>(buf);
 		std::function<Packet::packet_ptr()> task(std::bind(&Packet::Parse<game_room>, ptr, _game_room.shared_from_this()));

@@ -13,7 +13,7 @@ namespace Packet
 	inline packet_ptr Parse(packet_ptr p, std::shared_ptr<T> room)
 	{
 		UINT length, event;
-		char * data_ptr = p.get()->data();
+		wchar_t * data_ptr = p.get()->data();
 		std::memcpy(&event, data_ptr, sizeof(UINT));
 		std::memcpy(&length, data_ptr + 4, sizeof(UINT));
 		Body_interface * ptr;

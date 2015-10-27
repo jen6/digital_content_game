@@ -11,11 +11,11 @@
 namespace Log {
 	using namespace std::chrono;
 
-	class Log
+	class Logger
 	{
 	public:
-		Log();
-		~Log();
+		Logger();
+		~Logger();
 
 		void L(std::string msg);
 		void L(std::string msg, int LogLevel);
