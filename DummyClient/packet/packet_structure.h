@@ -96,10 +96,10 @@ namespace Packet {
 		void serialize(Archive& ar, const unsigned int version)
 		{
 			ar& t;
-			ar& text;
+			//ar& text;
 		}
 		UINT t;
-		std::wstring text;
+		//std::wstring text;
 
 		test()
 		{

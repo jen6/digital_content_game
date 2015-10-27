@@ -4,19 +4,21 @@
 #include "client.h"
 #include "login.h"
 
-#define DOLOGINTEST
+//#define DOLOGINTEST
 
 int main()
 {
+#ifdef DOLOGINTEST
 	std::string str = Login::DoLogin("googler", "googleisbest123");
 	std::cout << str << std::endl;
+#endif
 
 #ifndef DOLOGINTEST
 	try {
 		boost::asio::io_service io;
 		boost::asio::io_service::work work(io);		//io_service가 종료되지 않도록 도와줌
 		tcp::resolver resolver(io);
-		auto endpoint_iterator = resolver.resolve({ "127.0.0.1","999" });
+		auto endpoint_iterator = resolver.resolve({ "127.0.0.1","1000" });
 
 		std::thread t1(boost::bind(&boost::asio::io_service::run, &io));
 		client c(io, endpoint_iterator);

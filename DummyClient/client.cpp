@@ -32,7 +32,7 @@ void client::send(Packet::packet_ptr& p)
 			std::cout << error << std::endl;
 		}
 	};
-	std::cout << "send : " << p.get()->data() << std::endl;
+	std::wcout << L"send : " << p.get()->data() << std::endl;
 	_socket.async_write_some(
 		boost::asio::buffer(p.get()->data(), p.get()->length()),
 		boost::bind(f, 
