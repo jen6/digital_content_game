@@ -35,6 +35,11 @@ namespace Packet {
 			std::memcpy(_data.data(), &pevent, sizeof(UINT));
 			std::memcpy(_data.data()+4, &len, sizeof(UINT));
 			std::memcpy(_data.data() + HEADER_LEN, data, len);
+			for (auto c : _data)
+			{
+				std::cout << std::hex << c << " ";
+			}
+			std::cout <<std::endl;
 			_len = HEADER_LEN + len;
 		}
 		wchar_t * data()
