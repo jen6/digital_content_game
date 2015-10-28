@@ -43,7 +43,6 @@ void client::send(Packet::packet_ptr& p)
 
 void client::read()
 {
-	std::cout << "hi i'm read" << std::endl;
 	_socket.async_read_some(
 		boost::asio::buffer(recv_buf.get()->data(), Packet::MAX_LEN),
 		//추후에 이부분에 핸들러 넣어주면 됨
@@ -57,7 +56,6 @@ void client::read()
 
 void client::handle_read(Packet::packet_ptr p, size_t byte_transfer, const boost::system::error_code & error)
 {
-	std::cout << "fuck" << std::endl;
 	if (!error)
 	{
 		std::cout << "recv" << std::endl;
@@ -70,11 +68,9 @@ void client::handle_read(Packet::packet_ptr p, size_t byte_transfer, const boost
 	_socket.async_read_some(
 		boost::asio::buffer(recv_buf.get()->data(), Packet::MAX_LEN),
 		//추후에 이부분에 핸들러 넣어주면 됨
-		boost::bind(&client::handle_read,
-			this,
-			recv_buf,
-			asio::placeholders::bytes_transferred,
-			asio::placeholders::error)
+		boost::bind(&client::read,
+			this
+			)
 		);
 };
 

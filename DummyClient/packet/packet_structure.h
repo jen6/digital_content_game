@@ -33,14 +33,13 @@ namespace Packet {
 		Packet(PACKET_EVENT pevent, const wchar_t * data, UINT len)
 		{
 			std::memcpy(_data.data(), &pevent, sizeof(UINT));
-			std::memcpy(_data.data()+4, &len, sizeof(UINT));
-			std::memcpy(_data.data() + HEADER_LEN, data, len);
-			for (auto c : _data)
-			{
-				std::cout << std::hex << c << " ";
+			std::memcpy(reinterpret_cast<char *>(_data.data())+4, &len, sizeof(UINT));
+			std::wmemcpy(_data.data() + HEADER_LEN/2, data, len);
+			_len = HEADER_LEN + len * 2;
+			for (int i = 0; i < _len; ++i) {
+				std::cout << std::hex << (int)_data.data()[i] << " ";
 			}
-			std::cout <<std::endl;
-			_len = HEADER_LEN + len;
+			std::cout << std::endl;
 		}
 		wchar_t * data()
 		{
@@ -89,7 +88,7 @@ namespace Packet {
 	public:
 		Body_interface() {}
 		virtual ~Body_interface() {};
-		virtual void Make_Body(const wchar_t * packet_body) = 0;
+		virtual void Make_Body(const wchar_t * packet_body, UINT len) = 0;
 		virtual packet_ptr Make_packet() = 0; //packet ¸¸µé±â
 	};
 
@@ -122,8 +121,12 @@ namespace Packet {
 			return std::make_shared<Packet>(packet_event, s.c_str(), s.length());
 		}
 
-		virtual void Make_Body(const wchar_t * packet_body) {
-			std::wstringstream ss(packet_body);
+		virtual void Make_Body(const wchar_t * packet_body, UINT len) {
+			boost::array<wchar_t, 1024> buf;
+			std::wmemcpy(buf.data(), packet_body, len);
+			buf[len] = 0;
+			std::wcout << buf.data() << std::endl;
+			std::wstringstream ss(buf.data());
 			boost::archive::text_wiarchive ia(ss, boost::archive::no_header);
 			ia >> *this;
 		}

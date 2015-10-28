@@ -37,6 +37,7 @@ int main()
 				std::cout << "fuck!" << std::endl;
 			}
 			c.send(p);
+			std::cout << "send cnt = " << std::dec << i << std::endl;
 		}
 		while (1)
 		{

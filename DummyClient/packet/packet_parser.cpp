@@ -1,23 +1,31 @@
 #include "packet_parser.h"
 namespace Packet 
 {
+
 	void Parse(packet_ptr p)
 	{
+		static int cnt = 0;
 		UINT length, event;
 		wchar_t * data_ptr = p.get()->data();
-		std::memcpy(&event, data_ptr, sizeof(UINT));
-		std::memcpy(&length, data_ptr + 4, sizeof(UINT));
+		std::memcpy(&event, reinterpret_cast<char *>(data_ptr), sizeof(UINT));
+		std::memcpy(&length, reinterpret_cast<char *>(data_ptr) + 4, sizeof(UINT));
 		Body_interface * ptr;
 		packet_ptr ret;
-
-		
-		std::cout << "parse" << std::endl;
+			
 		switch (static_cast<PACKET_EVENT>(event))
 		{
 		case PACKET_EVENT::TESTER:
 			ptr = new test();
-			ptr->Make_Body(data_ptr + HEADER_LEN);
-			std::cout << "recved t : " << dynamic_cast<test*>(ptr)->t << std::endl;
+			try {
+				ptr->Make_Body(data_ptr + HEADER_LEN / 2, length);
+			}
+			catch (std::exception& e)
+			{
+				std::cerr << e.what() << std::endl;
+			}
+			cnt += 1;
+			std::cout << "cnt : " << std::dec << cnt << std::endl;
+			std::cout << "recved t : "<< std::dec << dynamic_cast<test*>(ptr)->t << std::endl;
 			break;
 			//case PACKET_EVENT::LOAD_INFO:
 			//	InfoBody body(length, event);
