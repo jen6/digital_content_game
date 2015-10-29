@@ -1,11 +1,9 @@
 #pragma once
 #include <cstdlib>
 #include <sstream>
-#include <boost/array.hpp>
 #include <memory>
-#include <boost/archive/text_iarchive.hpp>
-#include <boost/archive/text_oarchive.hpp>
 
+#include <boost/array.hpp>
 #include <boost/archive/text_wiarchive.hpp>
 #include <boost/archive/text_woarchive.hpp>
 
@@ -18,7 +16,7 @@ namespace Packet {
 
 	//자료형과 제한사항
 	
-	enum : unsigned int { HEADER_LEN = 8, MAX_BODY_LEN = 1016 ,MAX_LEN = 1024 };
+	enum : unsigned int { WSTR_REALEN=2,HEADER_IDX = 4, HEADER_LEN = 8, MAX_BODY_LEN = 1016 ,MAX_LEN = 1024 };
 
 	class Ticket
 	{
@@ -32,11 +30,14 @@ namespace Packet {
 		Packet(boost::array<wchar_t, 1024>& data) : _data(data) {}
 		Packet(PACKET_EVENT pevent, const wchar_t * data, UINT len)
 		{
-			len *= 2;
-			std::memcpy(_data.data(), &pevent, sizeof(UINT));
-			std::memcpy(reinterpret_cast<char *>(_data.data())+4, &len, sizeof(UINT));
-			std::wmemcpy(_data.data() + HEADER_LEN/2, data, len);
+			len *= WSTR_REALEN;
 			_len = HEADER_LEN + len;
+			auto header_len_ptr = reinterpret_cast<char *>(_data.data()) + 4;
+
+			std::memcpy(_data.data(), &pevent, sizeof(UINT));
+			std::memcpy(header_len_ptr, &len, sizeof(UINT));
+			std::wmemcpy(_data.data() + HEADER_IDX, data, len);
+			
 		}
 		wchar_t * data()
 		{
@@ -48,7 +49,7 @@ namespace Packet {
 		}
 		const wchar_t * get_body() const
 		{
-			return _data.data() + HEADER_LEN;
+			return _data.data() + HEADER_IDX;
 		}
 
 		size_t length() const
@@ -97,10 +98,8 @@ namespace Packet {
 		void serialize(Archive& ar, const unsigned int version)
 		{
 			ar& t;
-			//ar& text;
 		}
 		UINT t;
-		//std::wstring text;
 
 		test()
 		{
@@ -113,16 +112,17 @@ namespace Packet {
 			std::wstringstream ss;
 			boost::archive::text_woarchive oa(ss, boost::archive::no_header);
 			oa << const_cast<const test &>(*this);
-			std::wstring s = ss.str();
-			std::wcout << s << std::endl;
-			return std::make_shared<Packet>(packet_event, s.c_str(), s.length());
+
+			std::wstring data = ss.str();
+			std::wcout << data << std::endl;
+			return std::make_shared<Packet>(packet_event, data.c_str(), data.length());
 		}
 
-		virtual void Make_Body(const wchar_t * packet_body, UINT len) {
+		virtual void Make_Body(const wchar_t * packet_body, UINT len) 
+		{
 			boost::array<wchar_t, 1024> buf;
 			std::wmemcpy(buf.data(), packet_body, len);
-			buf[len] = 0;
-			std::wcout << buf.data() << std::endl;
+			
 			std::wstringstream ss(buf.data());
 			boost::archive::text_wiarchive ia(ss, boost::archive::no_header);
 			ia >> *this;
@@ -180,6 +180,4 @@ namespace Packet {
 			ar& damage;
 		}
 	};*/
-
-
 }

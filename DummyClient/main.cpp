@@ -21,7 +21,7 @@ int main()
 		auto endpoint_iterator = resolver.resolve({ "127.0.0.1","1000" });
 
 		std::thread t1(boost::bind(&boost::asio::io_service::run, &io));
-		client c(io, endpoint_iterator);
+		client cli(io, endpoint_iterator);
 
 
 		std::random_device rd;
@@ -36,7 +36,7 @@ int main()
 			if (!p) {
 				std::cout << "fuck!" << std::endl;
 			}
-			c.send(p);
+			cli.send(p);
 			std::cout << "send cnt = " << std::dec << i << std::endl;
 		}
 		while (1)
@@ -44,7 +44,11 @@ int main()
 			std::string c;
 			std::cin >> c;
 			if (c == "end")
+			{
+				cli.close();
 				break;
+			}
+				
 			if (io.stopped())
 			{
 				std::cout << "io_service stopped" << std::endl;

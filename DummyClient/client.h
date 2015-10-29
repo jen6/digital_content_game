@@ -32,6 +32,7 @@ private:
 	void dotest();
 public:
 	client(asio::io_service& , tcp::resolver::iterator );
+	void close();
 	client() = delete;
 
 	void send(Packet::packet_ptr& );

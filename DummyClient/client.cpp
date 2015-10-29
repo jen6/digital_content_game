@@ -7,8 +7,10 @@ void client::connect(tcp::resolver::iterator endpoint_iterator)
 		if (!ec) 
 		{
 			asio::async_read(_socket, asio::buffer(recv_buf.get()->data(), Packet::HEADER_LEN),
-				strand.wrap(boost::bind(&client::read_header, this, asio::placeholders::error))
-				);
+				strand.wrap(
+					boost::bind(
+						&client::read_header,this, asio::placeholders::error))
+			);
 		}
 		else
 		{
@@ -77,6 +79,26 @@ client::client(boost::asio::io_service& io_service, tcp::resolver::iterator endp
 {
 	connect(endpoint_iterator);
 
+}
+
+void client::close()
+{
+	boost::system::error_code errorcode;
+
+	if (_socket.is_open())
+	{
+		//_socket.shutdown(boost::asio::ip::tcp::socket::shutdown_both, errorcode);
+		//if (errorcode)
+		//{
+		//	std::cerr << "socket.shutdown error: " << errorcode.message() << std::endl;
+		//}
+
+		_socket.close(errorcode);
+		if (errorcode)
+		{
+			std::cerr << "socket.close error: " << errorcode.message() << std::endl;
+		}
+	}
 }
 
 

@@ -1,23 +1,27 @@
 #include "packet_parser.h"
 namespace Packet 
 {
-
-
+	//헤더에서 패킷 종류와 길이 파싱
 	Header ParseHeader(packet_ptr p)
 	{
 		UINT length, event;
 		wchar_t * data_ptr = p.get()->data();
-		std::memcpy(&event, reinterpret_cast<char *>(data_ptr), sizeof(UINT));
-		std::memcpy(&length, reinterpret_cast<char *>(data_ptr) + 4, sizeof(UINT));
+		auto Pdata = reinterpret_cast<char *>(data_ptr);
+
+		std::memcpy(&event, Pdata, sizeof(UINT));
+		std::memcpy(&length, Pdata + 4, sizeof(UINT));
 		return Header(length, static_cast<PACKET_EVENT>(event));
 	}
 
+	//패킷 바디를 파싱
 	void Parse(packet_ptr p)
 	{
 		UINT length, event;
 		wchar_t * data_ptr = p.get()->data();
-		std::memcpy(&event, reinterpret_cast<char *>(data_ptr), sizeof(UINT));
-		std::memcpy(&length, reinterpret_cast<char *>(data_ptr) + 4, sizeof(UINT));
+		auto Pdata = reinterpret_cast<char *>(data_ptr);
+
+		std::memcpy(&event, Pdata, sizeof(UINT));
+		std::memcpy(&length,Pdata + 4, sizeof(UINT));
 		Body_interface * ptr;
 		packet_ptr ret;
 			
@@ -26,7 +30,7 @@ namespace Packet
 		case PACKET_EVENT::TESTER:
 			ptr = new test();
 			try {
-				ptr->Make_Body(data_ptr + HEADER_LEN / 2, length);
+				ptr->Make_Body(data_ptr + HEADER_IDX, length);
 			}
 			catch (std::exception& e)
 			{
