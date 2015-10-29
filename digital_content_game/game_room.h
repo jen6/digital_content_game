@@ -12,6 +12,8 @@
 
 #include "packet.h"
 #include "ThreadPool.h"
+#include "Logger.h"
+
 class game_room;
 class game_session;
 
@@ -33,6 +35,7 @@ public:
 	static session_ptr create(asio::io_service&, game_room&);
 	asio::ip::tcp::socket& socket();
 	void start();		//read write 담당하는 부분
+	void close();
 	void send(Packet::packet_ptr p);		//각 유저에게 전달
 	void broadcast(Packet::packet_ptr p);
 	~game_session();
@@ -60,6 +63,7 @@ class game_room
 	: public std::enable_shared_from_this<game_room>
 {
 public:
+	//non copyable
 	game_room(const game_room &) = delete;
 	game_room& operator=(const game_room &) = delete;
 	~game_room();
@@ -69,6 +73,7 @@ public:
 
 	void broadcast(Packet::packet_ptr p); //모든 유저에게 데이터 브로드 케스트
 	void PassTask(std::function<Packet::packet_ptr()> task);
+	void UserDelete(session_ptr session);
 
 	std::mutex mtx;
 

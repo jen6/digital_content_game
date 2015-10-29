@@ -14,6 +14,7 @@ namespace game_logic
 	{
 		Packet::MoveBody* mv = move.get();
 		std::cout << "x, y : " << mv->x << " " << mv->y << std::endl;
-		return move->Make_packet();
+		auto ret = move.get()->Make_packet();
+		return ret;
 	}
 }

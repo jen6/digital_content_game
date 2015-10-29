@@ -5,8 +5,9 @@ namespace Packet
 	{
 		UINT length, event;
 		wchar_t * data_ptr = ptr;
-		std::memcpy(&event, reinterpret_cast<char *>(data_ptr), sizeof(UINT));
-		std::memcpy(&length, reinterpret_cast<char *>(data_ptr) + 4, sizeof(UINT));
+		auto data = reinterpret_cast<char *>(data_ptr);
+		std::memcpy(&event, data, sizeof(UINT));
+		std::memcpy(&length,data + 4, sizeof(UINT));
 		return Header(length, static_cast<PACKET_EVENT>(event));
 	}
 
@@ -14,10 +15,13 @@ namespace Packet
 	//inline packet_ptr Parse(packet_ptr p, std::shared_ptr<T> room)
 	packet_ptr Parse(packet_ptr p, room_ptr room)
 	{
+		std::cout << "thread id : " << std::this_thread::get_id() << std::endl;
 		UINT length, event;
 		wchar_t * data_ptr = p.get()->data();
-		std::memcpy(&event, data_ptr, sizeof(UINT));
-		std::memcpy(&length, reinterpret_cast<char*>(data_ptr) + 4, sizeof(UINT));
+		auto Pdata = reinterpret_cast<char *>(data_ptr);
+
+		std::memcpy(&event, Pdata, sizeof(UINT));
+		std::memcpy(&length, Pdata + 4, sizeof(UINT));
 		Body_interface * ptr;
 		packet_ptr ret;
 
@@ -26,7 +30,7 @@ namespace Packet
 		{
 		case PACKET_EVENT::TESTER:
 			ptr = new test();
-			ptr->Make_Body(data_ptr + HEADER_LEN / 2, length);
+			ptr->Make_Body(data_ptr + HEADER_IDX, length);
 			ret = game_logic::do_work(std::shared_ptr<test>(dynamic_cast<test*>(ptr)));
 			break;
 		case PACKET_EVENT::OBJECT_MOVE:

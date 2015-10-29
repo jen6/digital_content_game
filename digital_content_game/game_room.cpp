@@ -33,7 +33,6 @@ void game_room::handle_accept(session_ptr ptr, const boost::system::error_code& 
 	if (!error)
 	{
 		std::lock_guard<std::mutex> lock(mtx);
-		std::cout << "session established!" << std::endl;
 		users.push_back(ptr);
 		ptr.get()->start();
 		start_accept();
@@ -45,6 +44,7 @@ void game_room::handle_accept(session_ptr ptr, const boost::system::error_code& 
 
 void game_room::broadcast(Packet::packet_ptr p)
 {
+	std::lock_guard<std::mutex> lock(mtx);
 	for (auto user : users)
 	{
 		user.get()->send(p);
@@ -63,7 +63,7 @@ void game_room::PassTask(std::function<Packet::packet_ptr()> task)
 		}
 		else
 		{
-			std::cout << "fuck" << std::endl;
+			Log::Logger::Instance()->L("error in pass task");
 		}
 	}
 	catch (std::exception& e)
@@ -87,6 +87,9 @@ asio::ip::tcp::socket & game_session::socket()
 
 void game_session::start()
 {
+	std::string str = _socket.remote_endpoint().address().to_string();
+	Log::Logger::Instance()->L("client connected session : " + str);
+
 	asio::async_read(_socket,
 		asio::buffer(data_, Packet::HEADER_LEN),
 		boost::bind(
@@ -97,21 +100,47 @@ void game_session::start()
 	);
 }
 
+void game_session::close()
+{
+	boost::system::error_code errorcode;
+
+	if (_socket.is_open())
+	{
+		_socket.close(errorcode);
+		if (errorcode)
+		{
+			Log::Logger::Instance()->L("socket.close error: " + errorcode.message());
+		}
+		else
+		{
+			Log::Logger::Instance()->L("socket closed");
+		}
+	}
+}
+
 void game_session::read_header(const boost::system::error_code& error)
 {
-	Packet::Header header = Packet::ParseHeader(data_.data());
+	if (!error)
+	{
+		Packet::Header header = Packet::ParseHeader(data_.data());
 
-	std::cout << "Parsed : " << static_cast<unsigned int>(header.packet_event)<< ", " << header.packet_len << std::endl;
+		std::cout << "Parsed : " << static_cast<unsigned int>(header.packet_event) << ", " << header.packet_len << std::endl;
 
-	auto ptr = reinterpret_cast<char*>(data_.data()) + Packet::HEADER_LEN;
+		auto ptr = reinterpret_cast<char*>(data_.data()) + Packet::HEADER_LEN;
 
-	asio::async_read(_socket,
-		boost::asio::buffer(ptr, header.packet_len),
-		strand.wrap(
-			boost::bind(&game_session::handle_read_body,
-				this,
-				asio::placeholders::error)
-		));
+		asio::async_read(_socket,
+			boost::asio::buffer(ptr, header.packet_len),
+			strand.wrap(
+				boost::bind(&game_session::handle_read_body,
+					this,
+					asio::placeholders::error)
+				));
+	}
+	else if (error == boost::asio::error::eof)
+	{
+		std::string str = _socket.remote_endpoint().address().to_string();
+		Log::Logger::Instance()->L("client disconnected session : " + str);
+	}
 }
 
 void game_session::handle_read_body(const boost::system::error_code & error)
@@ -122,7 +151,7 @@ void game_session::handle_read_body(const boost::system::error_code & error)
 
 		auto ptr = std::make_shared<Packet::Packet>(buf);
 		std::function<Packet::packet_ptr()> task(
-			std::bind(&Packet::Parse<game_room>,
+			std::bind(&Packet::Parse,
 				ptr, _game_room.shared_from_this()
 				)
 		);
@@ -137,6 +166,8 @@ void game_session::handle_read_body(const boost::system::error_code & error)
 				asio::placeholders::error));
 	}
 	else {
+		std::string str = _socket.remote_endpoint().address().to_string();
+		Log::Logger::Instance()->L("client error read body session : " + str);
 		std::cout << "err cnt : " << error.message() << std::endl;
 	}
 }
@@ -156,7 +187,9 @@ void game_session::handle_write(const boost::system::error_code& error)
 {
 	if (error)
 	{
-		std::cout << "error in write : " << error.message() << " " << error.value() << std::endl;
+		//std::cout << "error in write : " << error.message() << " " << error.value() << std::endl;
+		std::string str = _socket.remote_endpoint().address().to_string();
+		Log::Logger::Instance()->L("client error in send session : " + str);
 	}
 }
 
@@ -167,6 +200,7 @@ void game_session::broadcast(Packet::packet_ptr p)
 
 game_session::~game_session()
 {
+	close();
 }
 
 game_session::game_session(asio::io_service & _io_service, game_room& room) : _socket(_io_service), _game_room(room), strand(_io_service)

@@ -35,13 +35,12 @@ int main() {
 		std::cerr << err.what() << std::endl;
 	}
 #endif
-	Log::Logger logger;
 
 	//threadpool객체 만들기 그리고 game_room 객체 안에 초기화 할때 넣어주기
 	size_t thread_pool_num = 3;
 	boost::asio::io_service _io_service;
 	ThreadPoolPtr tp = std::shared_ptr<ThreadPool>(new ThreadPool(thread_pool_num));
-	logger.L("ThreadPool Ok");
+	Log::Logger::Instance()->L("ThreadPool Ok");
 
 	//room vector 만들어서 저장하기
 	std::vector<room_ptr> rooms;

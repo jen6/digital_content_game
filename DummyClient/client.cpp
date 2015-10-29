@@ -87,11 +87,11 @@ void client::close()
 
 	if (_socket.is_open())
 	{
-		//_socket.shutdown(boost::asio::ip::tcp::socket::shutdown_both, errorcode);
-		//if (errorcode)
-		//{
-		//	std::cerr << "socket.shutdown error: " << errorcode.message() << std::endl;
-		//}
+		_socket.shutdown(boost::asio::ip::tcp::socket::shutdown_both, errorcode);
+		if (errorcode)
+		{
+			std::cerr << "socket.shutdown error: " << errorcode.message() << std::endl;
+		}
 
 		_socket.close(errorcode);
 		if (errorcode)

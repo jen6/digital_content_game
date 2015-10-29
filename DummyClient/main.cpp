@@ -1,6 +1,5 @@
 #include <iostream>
 #include <thread>
-#include <random>
 #include "client.h"
 #include "login.h"
 
@@ -23,15 +22,11 @@ int main()
 		std::thread t1(boost::bind(&boost::asio::io_service::run, &io));
 		client cli(io, endpoint_iterator);
 
-
-		std::random_device rd;
-
 		for (auto i = 0; i < 30; ++i)
 		{
-			Packet::test t;
-			unsigned int buf = rd();
-			t.t = i;
-			std::cout << buf << std::endl;
+			Packet::MoveBody t;
+			t.x = i;
+			t.y = i;
 			auto p = t.Make_packet();
 			if (!p) {
 				std::cout << "fuck!" << std::endl;

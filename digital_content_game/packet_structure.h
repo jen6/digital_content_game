@@ -17,7 +17,7 @@ namespace Packet {
 
 	//자료형과 제한사항
 	
-	enum : unsigned int { HEADER_LEN = 8, MAX_BODY_LEN = 1016 ,MAX_LEN = 1024 };
+	enum : unsigned int { WSTR_REALEN = 2, HEADER_IDX = 4, HEADER_LEN = 8, MAX_BODY_LEN = 1016 ,MAX_LEN = 1024 };
 
 	class Packet 
 		: public std::enable_shared_from_this<Packet> 
@@ -28,11 +28,14 @@ namespace Packet {
 		Packet(boost::array<wchar_t, 1024>& data) : _data(data) {}
 		Packet(PACKET_EVENT pevent, const wchar_t * data, UINT len)
 		{
-			len *= 2;
-			std::memcpy(_data.data(), &pevent, sizeof(UINT));
-			std::memcpy(reinterpret_cast<char *>(_data.data())+4, &len, sizeof(UINT));
-			std::wmemcpy(_data.data() + HEADER_LEN/2, data, len);
+			len *= WSTR_REALEN;
 			_len = HEADER_LEN + len;
+			auto header_len_ptr = reinterpret_cast<char *>(_data.data()) + 4;
+
+			std::memcpy(_data.data(), &pevent, sizeof(UINT));
+			std::memcpy(header_len_ptr, &len, sizeof(UINT));
+			std::wmemcpy(_data.data() + HEADER_IDX, data, len);
+
 		}
 		wchar_t * data()
 		{
