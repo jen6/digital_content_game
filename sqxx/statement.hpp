@@ -34,7 +34,7 @@ private:
 public:
 	connection &conn;
 
-protected:
+protected:	
 	bool completed;
 
 public:
@@ -43,7 +43,8 @@ public:
 
 	// Don't copy, move
 	statement(const statement &) = delete;
-	statement& operator=(const statement&) = delete;
+	//statement& operator=(const statement&) = delete;
+	statement& operator=(const statement&);
 	statement(statement &&) = default;
 	statement& operator=(statement&&) = default;
 

@@ -1,23 +1,42 @@
 #include "packet_parser.h"
 namespace Packet 
 {
+	//헤더에서 패킷 종류와 길이 파싱
+	Header ParseHeader(packet_ptr p)
+	{
+		UINT length, event;
+		wchar_t * data_ptr = p.get()->data();
+		auto Pdata = reinterpret_cast<char *>(data_ptr);
+
+		std::memcpy(&event, Pdata, sizeof(UINT));
+		std::memcpy(&length, Pdata + 4, sizeof(UINT));
+		return Header(length, static_cast<PACKET_EVENT>(event));
+	}
+
+	//패킷 바디를 파싱
 	void Parse(packet_ptr p)
 	{
 		UINT length, event;
-		char * data_ptr = p.get()->data();
-		std::memcpy(&event, data_ptr, sizeof(UINT));
-		std::memcpy(&length, data_ptr + 4, sizeof(UINT));
+		wchar_t * data_ptr = p.get()->data();
+		auto Pdata = reinterpret_cast<char *>(data_ptr);
+
+		std::memcpy(&event, Pdata, sizeof(UINT));
+		std::memcpy(&length,Pdata + 4, sizeof(UINT));
 		Body_interface * ptr;
 		packet_ptr ret;
-
-		
-		std::cout << "parse" << std::endl;
+			
 		switch (static_cast<PACKET_EVENT>(event))
 		{
 		case PACKET_EVENT::TESTER:
 			ptr = new test();
-			ptr->Make_Body(data_ptr + HEADER_LEN);
-			std::cout << "recved t : " << dynamic_cast<test*>(ptr)->t << std::endl;
+			try {
+				ptr->Make_Body(data_ptr + HEADER_IDX, length);
+			}
+			catch (std::exception& e)
+			{
+				std::cerr << e.what() << std::endl;
+			}
+			std::cout << "recved t : "<< std::dec << dynamic_cast<test*>(ptr)->t << std::endl;
 			break;
 			//case PACKET_EVENT::LOAD_INFO:
 			//	InfoBody body(length, event);

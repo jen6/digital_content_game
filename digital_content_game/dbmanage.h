@@ -1,7 +1,10 @@
 #pragma once
 #include <string>
+#include <iostream>
 
-#include "../sqxx/sqxx.hpp"
+#include <boost\lexical_cast.hpp>
+
+#include "../sqlite_modern_cpp.h"
 
 #include "DbSet.h"
 
@@ -36,6 +39,9 @@ namespace DB
 
 	class UserDBStruct {
 	public:
+		UserDBStruct() = default;
+		~UserDBStruct() = default;
+		UserDBStruct& operator=(UserDBStruct& user);
 		std::string Nickname;	//4
 		std::string Skill;		//5
 		int Exp;				//6
@@ -46,21 +52,24 @@ namespace DB
 		int Quest;				//11
 		std::string Session;	//12
 
-		void Parse(sqxx::statement st);
+		//void Parse(sqxx::statement* st);
+		std::string UpdateSql();
+
 	};
 
 
 	class DbManager
 	{
 	public:
+
 		DbManager();
 		~DbManager();
 
 		UserDBStruct GetUser(std::string& session);
-		void Update(const UserDBStruct& user);
+		void Update(UserDBStruct& user); 
 
 	private:
-		sqxx::connection dbcon;
+		sqlite::database db;
 	};
 }
 

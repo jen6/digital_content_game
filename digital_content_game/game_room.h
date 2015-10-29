@@ -39,12 +39,14 @@ private:
 
 	game_session(asio::io_service&, game_room&);
 	void handle_write(const boost::system::error_code& error);
-	void handle_read(const boost::system::error_code& error);
+	void handle_read_body(const boost::system::error_code& error);
+	void read_header(const boost::system::error_code& error);
 	void handler(const boost::system::error_code & error, std::size_t recv_size);
 
 	std::mutex mtx;
+	asio::strand strand;
 	asio::ip::tcp::socket _socket;
-	boost::array<char, MAX_LENGTH> data_;
+	boost::array<wchar_t, MAX_LENGTH> data_;
 	game_room& _game_room;
 };
 

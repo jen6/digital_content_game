@@ -1,4 +1,4 @@
-#pragma once
+	#pragma once
 //게임 이벤트 구분 enum
 
 namespace Packet

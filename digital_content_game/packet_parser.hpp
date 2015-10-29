@@ -9,13 +9,15 @@
 
 namespace Packet 
 {
+	Header ParseHeader(wchar_t* ptr);
+
 	template<class T>
 	inline packet_ptr Parse(packet_ptr p, std::shared_ptr<T> room)
 	{
 		UINT length, event;
-		char * data_ptr = p.get()->data();
+		wchar_t * data_ptr = p.get()->data();
 		std::memcpy(&event, data_ptr, sizeof(UINT));
-		std::memcpy(&length, data_ptr + 4, sizeof(UINT));
+		std::memcpy(&length, reinterpret_cast<char*>(data_ptr) + 4, sizeof(UINT));
 		Body_interface * ptr;
 		packet_ptr ret;
 
@@ -24,7 +26,7 @@ namespace Packet
 		{
 		case static_cast<UINT>(PACKET_EVENT::TESTER) :
 			ptr = new test();
-			ptr->Make_Body(data_ptr + HEADER_LEN, length);
+			ptr->Make_Body(data_ptr + HEADER_LEN/2, length);
 			ret = game_logic::do_work(std::shared_ptr<test>(dynamic_cast<test*>(ptr)));
 			break;
 			//case PACKET_EVENT::LOAD_INFO:
