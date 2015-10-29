@@ -8,10 +8,12 @@
 
 #include <boost\lexical_cast.hpp>
 
+#include "singleton.hpp"
+
 namespace Log {
 	using namespace std::chrono;
 
-	class Logger
+	class Logger : public CppSingleton<Logger>
 	{
 	public:
 		Logger();

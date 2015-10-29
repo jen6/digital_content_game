@@ -41,7 +41,7 @@ private:
 	void handle_write(const boost::system::error_code& error);
 	void handle_read_body(const boost::system::error_code& error);
 	void read_header(const boost::system::error_code& error);
-	void handler(const boost::system::error_code & error, std::size_t recv_size);
+	//void handler(const boost::system::error_code & error, std::size_t recv_size);
 
 	std::mutex mtx;
 	asio::strand strand;

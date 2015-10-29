@@ -111,16 +111,13 @@ void game_session::read_header(const boost::system::error_code& error)
 			boost::bind(&game_session::handle_read_body,
 				this,
 				asio::placeholders::error)
-			));
+		));
 }
 
 void game_session::handle_read_body(const boost::system::error_code & error)
 {
-	static int cnt = 0;
 	if (!error)
 	{
-		cnt += 1;
-		std::cout << "read body cnt : " << cnt << std::endl;
 		boost::array<wchar_t, 1024> buf(data_);
 
 		auto ptr = std::make_shared<Packet::Packet>(buf);
@@ -143,7 +140,6 @@ void game_session::handle_read_body(const boost::system::error_code & error)
 		std::cout << "err cnt : " << error.message() << std::endl;
 	}
 }
-
 
 void game_session::send(Packet::packet_ptr p)
 {
@@ -169,41 +165,6 @@ void game_session::broadcast(Packet::packet_ptr p)
 	_game_room.broadcast(p);
 }
 
-
-//TODO 여기부분 패킷파서 만들기
-void game_session::handler(const boost::system::error_code & error, std::size_t recv_size)
-{
-	static int cnt = 0;
-	if (!error)
-	{
-		cnt += 1;
-		std::cout << "recv cnt : " << std::dec << cnt << std::endl;
-		boost::array<wchar_t, 1024> buf(data_);
-		std::cout << buf.data() << std::endl;
-
-		for (int i = 0; i < recv_size; ++i) {
-			std::cout << std::hex << (int)buf.data()[i] << " ";
-		}
-		std::cout << std::endl;
-
-		auto ptr = std::make_shared<Packet::Packet>(buf);
-		std::function<Packet::packet_ptr()> task(
-			boost::bind(&Packet::Parse<game_room>,
-					ptr, _game_room.shared_from_this()
-				)
-			);
-		_game_room.PassTask(task);
-	}
-	asio::async_read(_socket, asio::buffer(data_, MAX_LENGTH),
-		strand.wrap(boost::bind(
-			&game_session::handle_read_body,
-			this,
-			asio::placeholders::error
-			))
-		);
-}
-
-
 game_session::~game_session()
 {
 }
@@ -211,5 +172,3 @@ game_session::~game_session()
 game_session::game_session(asio::io_service & _io_service, game_room& room) : _socket(_io_service), _game_room(room), strand(_io_service)
 {
 }
-
-
