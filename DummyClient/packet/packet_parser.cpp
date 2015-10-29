@@ -1,3 +1,4 @@
+//이 파일 각각 case에다 처리할수있는 함수 넣어주면 됨.
 #include "packet_parser.h"
 namespace Packet 
 {
@@ -37,6 +38,19 @@ namespace Packet
 				std::cerr << e.what() << std::endl;
 			}
 			std::cout << "recved t : "<< std::dec << dynamic_cast<test*>(ptr)->t << std::endl;
+			break;
+
+		case PACKET_EVENT::OBJECT_MOVE:
+			ptr = new MoveBody();
+			try {
+				ptr->Make_Body(data_ptr + HEADER_IDX, length);
+			}
+			catch (std::exception& e)
+			{
+				std::cerr << e.what() << std::endl;
+			}
+			std::cout << "recved move : " <<  dynamic_cast<MoveBody*>(ptr)->x
+				<< ", " << dynamic_cast<MoveBody*>(ptr)->y << std::endl;
 			break;
 			//case PACKET_EVENT::LOAD_INFO:
 			//	InfoBody body(length, event);

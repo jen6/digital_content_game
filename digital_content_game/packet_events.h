@@ -12,6 +12,8 @@ namespace Packet
 
 		OBJECT_STATECH, //오브젝트 스텟변경
 						//이 안에 이동 멈춤 공격 스킬 등등 상태 넣기
+		OBJECT_MOVE,
+
 		TESTER,
 	};
 

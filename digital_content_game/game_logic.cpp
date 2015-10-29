@@ -10,4 +10,10 @@ namespace game_logic
 		auto pack = t.Make_packet();
 		return pack;
 	}
+	Packet::packet_ptr do_move(std::shared_ptr<Packet::MoveBody> move, room_ptr room)
+	{
+		Packet::MoveBody* mv = move.get();
+		std::cout << "x, y : " << mv->x << " " << mv->y << std::endl;
+		return move->Make_packet();
+	}
 }

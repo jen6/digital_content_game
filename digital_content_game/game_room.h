@@ -20,6 +20,8 @@ class game_session;
 using session_ptr = std::shared_ptr<game_session>;
 using room_ptr = std::shared_ptr<game_room>;
 
+#include "packet_parser.hpp"
+
 namespace asio =  boost::asio;
 //http://www.boost.org/doc/libs/1_44_0/doc/html/boost_asio/tutorial/tutdaytime7.html
 
