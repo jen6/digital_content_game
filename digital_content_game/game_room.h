@@ -12,6 +12,8 @@
 
 #include "packet.h"
 #include "ThreadPool.h"
+#include "Logger.h"
+
 class game_room;
 class game_session;
 

@@ -41,7 +41,7 @@ int main() {
 	size_t thread_pool_num = 3;
 	boost::asio::io_service _io_service;
 	ThreadPoolPtr tp = std::shared_ptr<ThreadPool>(new ThreadPool(thread_pool_num));
-	logger.L("ThreadPool Ok");
+	Log::Logger::Instance()->L("ThreadPool Ok");
 
 	//room vector 만들어서 저장하기
 	std::vector<room_ptr> rooms;
@@ -50,6 +50,7 @@ int main() {
 		rooms.push_back(room);
 		std::cout << "GameRoom" << i <<" Ok" << std::endl;
 	}
+	Log::Logger::Instance()->L("Room init Ok");
 	std::thread io_service_thread([&]() { _io_service.run(); });
 	std::cout << "io_service_start Ok" << std::endl;
 	io_service_thread.join();
