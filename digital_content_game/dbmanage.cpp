@@ -1,28 +1,27 @@
 #include "dbmanage.h"
 #include <thread>
 #include <chrono>
-#include "Logger.h"
 
 namespace DB 
 {
 
 	DbManager::DbManager() : db(DBFILE)
 	{
-		Log::Logger::Instance()->L("Db Manager SetUp Ok");
+		//dbcon.open(DBFILE, sqxx::OPEN_CREATE | sqxx::OPEN_READWRITE);
+		//std::cout << dbcon.filename() << std::endl;
+
 	}
 
 
 	DbManager::~DbManager()
-	{}
+	{
+	}
 
 	UserDBStruct DbManager::GetUser(std::string & session)
 	{
 
 		//Nickname, Skill, Exp, PHp, PAttack, PDefence, Level, Quest, LoginSession
 		std::string sql = GETUSER_SQL + "'" + session + "';";
-
-		std::string log = session + " : request db update";
-		Log::Logger::Instance()->L(log);
 
 		UserDBStruct user;
 		db << sql.c_str()
@@ -36,7 +35,6 @@ namespace DB
 			user.PDefence = PDefence; user.Level = Level; user.Quest = Quest;
 			user.Session = Session;
 		};
-
 		if (session != user.Session)
 		{
 			throw std::exception("fuck");
@@ -46,24 +44,21 @@ namespace DB
 
 	void DbManager::Update(UserDBStruct & user)
 	{
-		std::string log = user.Session + " : request db update";
-		Log::Logger::Instance()->L(log);
-
 		std::string sql = user.UpdateSql();
 		db << sql;
 	}
 
 	UserDBStruct & UserDBStruct::operator=(UserDBStruct & user)
 	{
-		Nickname	=		user.Nickname;
-		Skill		=		user.Skill;
-		Exp			=		user.Exp;
-		PHp			=		user.PHp;
-		PAttack		=		user.PAttack;
-		PDefence	=		user.PDefence;
-		Level		=		user.Level;
-		Quest		=		user.Quest;
-		Session		=		user.Session;
+		Nickname = user.Nickname;
+		Skill = user.Skill;
+		Exp = user.Exp;
+		PHp = user.PHp;
+		PAttack = user.PAttack;
+		PDefence = user.PDefence;
+		Level = user.Level;
+		Quest = user.Quest;
+		Session = user.Session;
 		return *this;
 	}
 

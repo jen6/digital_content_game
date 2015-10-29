@@ -87,10 +87,6 @@ asio::ip::tcp::socket & game_session::socket()
 
 void game_session::start()
 {
-	auto addr = _socket.remote_endpoint().address();
-	std::string log = "Connection Establic : " + addr.to_string();
-	Log::Logger::Instance()->L(log);
-
 	asio::async_read(_socket,
 		asio::buffer(data_, Packet::HEADER_LEN),
 		boost::bind(
@@ -105,7 +101,7 @@ void game_session::read_header(const boost::system::error_code& error)
 {
 	Packet::Header header = Packet::ParseHeader(data_.data());
 
-	//std::cout << "Parsed : " << static_cast<unsigned int>(header.packet_event)<< ", " << header.packet_len << std::endl;
+	std::cout << "Parsed : " << static_cast<unsigned int>(header.packet_event)<< ", " << header.packet_len << std::endl;
 
 	auto ptr = reinterpret_cast<char*>(data_.data()) + Packet::HEADER_LEN;
 

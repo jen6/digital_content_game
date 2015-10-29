@@ -52,6 +52,7 @@ namespace DB
 		int Quest;				//11
 		std::string Session;	//12
 
+		//void Parse(sqxx::statement* st);
 		std::string UpdateSql();
 
 	};
