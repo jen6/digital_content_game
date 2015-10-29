@@ -6,7 +6,7 @@ namespace game_logic
 	{
 		std::cout << ptr.get()->t << std::endl;
 		Packet::test t;
-		t.t = 999;
+		t.t = ptr.get()->t;
 		auto pack = t.Make_packet();
 		return pack;
 	}

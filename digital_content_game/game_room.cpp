@@ -87,22 +87,81 @@ asio::ip::tcp::socket & game_session::socket()
 
 void game_session::start()
 {
-	_socket.async_read_some(asio::buffer(data_, MAX_LENGTH),
+	asio::async_read(_socket,
+		asio::buffer(data_, Packet::HEADER_LEN),
 		boost::bind(
-			&game_session::handle_read,
+			&game_session::read_header,
 			this,
 			asio::placeholders::error
+		)
+	);
+}
+
+void game_session::read_header(const boost::system::error_code& error)
+{
+	Packet::Header header = Packet::ParseHeader(data_.data());
+
+	std::cout << "Parsed : " << static_cast<unsigned int>(header.packet_event)<< ", " << header.packet_len << std::endl;
+
+	auto ptr = reinterpret_cast<char*>(data_.data()) + Packet::HEADER_LEN;
+
+	asio::async_read(_socket,
+		boost::asio::buffer(ptr, header.packet_len),
+		strand.wrap(
+			boost::bind(&game_session::handle_read_body,
+				this,
+				asio::placeholders::error)
 			));
 }
 
+void game_session::handle_read_body(const boost::system::error_code & error)
+{
+	static int cnt = 0;
+	if (!error)
+	{
+		cnt += 1;
+		std::cout << "read body cnt : " << cnt << std::endl;
+		boost::array<wchar_t, 1024> buf(data_);
+
+		auto ptr = std::make_shared<Packet::Packet>(buf);
+		std::function<Packet::packet_ptr()> task(
+			std::bind(&Packet::Parse<game_room>,
+				ptr, _game_room.shared_from_this()
+				)
+		);
+
+		_game_room.PassTask(task);
+
+		asio::async_read(_socket,
+			asio::buffer(data_, Packet::HEADER_LEN),
+			boost::bind(
+				&game_session::read_header,
+				this,
+				asio::placeholders::error));
+	}
+	else {
+		std::cout << "err cnt : " << error.message() << std::endl;
+	}
+}
+
+
 void game_session::send(Packet::packet_ptr p)
 {
-	_socket.async_write_some(
+	asio::async_write(
+		_socket,
 		asio::buffer(p.get()->data(), p.get()->length()),
-		boost::bind(
-			&game_session::handle_write,
-			this,
-			asio::placeholders::error));
+		strand.wrap(boost::bind(
+		&game_session::handle_write,
+		this,
+		asio::placeholders::error)));
+}
+
+void game_session::handle_write(const boost::system::error_code& error)
+{
+	if (error)
+	{
+		std::cout << "error in write : " << error.message() << " " << error.value() << std::endl;
+	}
 }
 
 void game_session::broadcast(Packet::packet_ptr p)
@@ -110,23 +169,6 @@ void game_session::broadcast(Packet::packet_ptr p)
 	_game_room.broadcast(p);
 }
 
-void game_session::handle_read(const boost::system::error_code & error)
-{
-	static int err = 0;
-	if (!error)
-	{
-		_socket.async_read_some(asio::buffer(data_, MAX_LENGTH),
-			boost::bind(
-				&game_session::handler,
-				this,
-				asio::placeholders::error,
-				asio::placeholders::bytes_transferred));
-	}
-	else {
-		err += 1;
-		std::cout << "err cnt : " << std::dec << err << std::endl;
-	}
-}
 
 //TODO 여기부분 패킷파서 만들기
 void game_session::handler(const boost::system::error_code & error, std::size_t recv_size)
@@ -145,36 +187,28 @@ void game_session::handler(const boost::system::error_code & error, std::size_t 
 		std::cout << std::endl;
 
 		auto ptr = std::make_shared<Packet::Packet>(buf);
-		std::function<Packet::packet_ptr()> task(std::bind(&Packet::Parse<game_room>, ptr, _game_room.shared_from_this()));
+		std::function<Packet::packet_ptr()> task(
+			boost::bind(&Packet::Parse<game_room>,
+					ptr, _game_room.shared_from_this()
+				)
+			);
 		_game_room.PassTask(task);
 	}
-	_socket.async_read_some(asio::buffer(data_, MAX_LENGTH),
-		boost::bind(
-			&game_session::handle_read,
+	asio::async_read(_socket, asio::buffer(data_, MAX_LENGTH),
+		strand.wrap(boost::bind(
+			&game_session::handle_read_body,
 			this,
 			asio::placeholders::error
-			));
+			))
+		);
 }
-void game_session::handle_write(const boost::system::error_code& error)
-{
-	if (!error) {
-		_socket.async_read_some(asio::buffer(data_, MAX_LENGTH),
-			boost::bind(
-				&game_session::handle_read,
-				this,
-				asio::placeholders::error));
-	}
-	else
-	{
-		std::cout << "error in write : " << error.message() << " " << error.value() << std::endl;
-	}
-}
+
 
 game_session::~game_session()
 {
 }
 
-game_session::game_session(asio::io_service & _io_service, game_room& room) : _socket(_io_service), _game_room(room)
+game_session::game_session(asio::io_service & _io_service, game_room& room) : _socket(_io_service), _game_room(room), strand(_io_service)
 {
 }
 

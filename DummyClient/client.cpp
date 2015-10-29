@@ -6,77 +6,65 @@ void client::connect(tcp::resolver::iterator endpoint_iterator)
 		[this](boost::system::error_code ec, tcp::resolver::iterator){
 		if (!ec) 
 		{
+			asio::async_read(_socket, asio::buffer(recv_buf.get()->data(), Packet::HEADER_LEN),
+				strand.wrap(boost::bind(&client::read_header, this, asio::placeholders::error))
+				);
 		}
 		else
 		{
-			std::cout << ec << std::endl;
-
+			std::cout << "error in connection" << ec << std::endl;
+			exit(1);
 		}
 	});
-
-	read();
 }
 
 void client::send(Packet::packet_ptr& p)
 {
-	std::cout << "hello" << std::endl;
-	if (!p)
-	{
-		std::cout << "fuck! where is my ptr" << std::endl;
-	}
-
-	boost::function<void(const boost::system::error_code& )> f = 
-		[](const boost::system::error_code & error) {
-		if (error)
-		{
-			std::cout << error << std::endl;
-		}
-	};
 	std::wcout << L"send : " << p.get()->data() << std::endl;
-	_socket.async_write_some(
+	asio::async_write(_socket,
 		boost::asio::buffer(p.get()->data(), p.get()->length()),
-		boost::bind(f, 
-			asio::placeholders::error)
+		strand.wrap(boost::bind(&client::handle_send, this,
+		asio::placeholders::error))
 	);
 }
 
+void client::handle_send(const boost::system::error_code & error) {
+	if (!error)
+	{
+		std::cout << "send success" << std::endl;
+	}
+	else {
+		std::cerr << "send fail : " << error.message() << std::endl;
+	}
+}
 
-void client::read()
+void client::read_header(const boost::system::error_code& error)
 {
-	_socket.async_read_some(
-		boost::asio::buffer(recv_buf.get()->data(), Packet::MAX_LEN),
-		//추후에 이부분에 핸들러 넣어주면 됨
-		boost::bind(&client::handle_read,
+	Packet::Header header = Packet::ParseHeader(recv_buf);
+	
+	asio::async_read(_socket,
+		boost::asio::buffer(recv_buf.get()->data() + 4, header.packet_len),
+		strand.wrap(
+			boost::bind(&client::handle_read_body,
 			this,
 			recv_buf,
 			asio::placeholders::bytes_transferred,
 			asio::placeholders::error)
-	);
+		));
 }
 
-void client::handle_read(Packet::packet_ptr p, size_t byte_transfer, const boost::system::error_code & error)
+void client::handle_read_body(Packet::packet_ptr p, size_t byte_transfer, const boost::system::error_code & error)
 {
 	if (!error)
 	{
-		std::cout << "recv" << std::endl;
 		Packet::Parse(p);
-	}
-	else
-	{
-		std::cout << "f" << std::endl;
-	}
-	_socket.async_read_some(
-		boost::asio::buffer(recv_buf.get()->data(), Packet::MAX_LEN),
-		//추후에 이부분에 핸들러 넣어주면 됨
-		boost::bind(&client::read,
-			this
-			)
-		);
+		asio::async_read(_socket, asio::buffer(recv_buf.get()->data(), Packet::HEADER_LEN),
+			strand.wrap(
+				boost::bind(&client::read_header, this, asio::placeholders::error)
+				)
+			);
+	}	
 };
-
-
-
-
 
 void client::dotest()
 {
@@ -85,7 +73,7 @@ void client::dotest()
 }
 
 client::client(boost::asio::io_service& io_service, tcp::resolver::iterator endpoint_iterator)
-	: _io_service(io_service), _socket(io_service), recv_buf(new Packet::Packet)
+	: _io_service(io_service), _socket(io_service), recv_buf(new Packet::Packet), strand(io_service)
 {
 	connect(endpoint_iterator);
 

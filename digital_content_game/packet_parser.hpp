@@ -9,6 +9,8 @@
 
 namespace Packet 
 {
+	Header ParseHeader(wchar_t* ptr);
+
 	template<class T>
 	inline packet_ptr Parse(packet_ptr p, std::shared_ptr<T> room)
 	{

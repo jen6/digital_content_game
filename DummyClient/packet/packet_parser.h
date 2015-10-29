@@ -6,5 +6,6 @@
 
 namespace Packet 
 {
+	Header ParseHeader(packet_ptr p);
 	void Parse(packet_ptr p);
 }

@@ -1,10 +1,19 @@
 #include "packet_parser.h"
 namespace Packet 
 {
+
+
+	Header ParseHeader(packet_ptr p)
+	{
+		UINT length, event;
+		wchar_t * data_ptr = p.get()->data();
+		std::memcpy(&event, reinterpret_cast<char *>(data_ptr), sizeof(UINT));
+		std::memcpy(&length, reinterpret_cast<char *>(data_ptr) + 4, sizeof(UINT));
+		return Header(length, static_cast<PACKET_EVENT>(event));
+	}
 
 	void Parse(packet_ptr p)
 	{
-		static int cnt = 0;
 		UINT length, event;
 		wchar_t * data_ptr = p.get()->data();
 		std::memcpy(&event, reinterpret_cast<char *>(data_ptr), sizeof(UINT));
@@ -23,8 +32,6 @@ namespace Packet
 			{
 				std::cerr << e.what() << std::endl;
 			}
-			cnt += 1;
-			std::cout << "cnt : " << std::dec << cnt << std::endl;
 			std::cout << "recved t : "<< std::dec << dynamic_cast<test*>(ptr)->t << std::endl;
 			break;
 			//case PACKET_EVENT::LOAD_INFO:

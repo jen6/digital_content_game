@@ -22,11 +22,6 @@ namespace Packet {
 	
 	enum : unsigned int { HEADER_LEN = 8, MAX_BODY_LEN = 1016 ,MAX_LEN = 1024 };
 
-	class Ticket
-	{
-
-	};
-
 	class Packet 
 		: public std::enable_shared_from_this<Packet> 
 	{
@@ -36,14 +31,11 @@ namespace Packet {
 		Packet(boost::array<wchar_t, 1024>& data) : _data(data) {}
 		Packet(PACKET_EVENT pevent, const wchar_t * data, UINT len)
 		{
+			len *= 2;
 			std::memcpy(_data.data(), &pevent, sizeof(UINT));
 			std::memcpy(reinterpret_cast<char *>(_data.data())+4, &len, sizeof(UINT));
 			std::wmemcpy(_data.data() + HEADER_LEN/2, data, len);
-			_len = HEADER_LEN + len * 2;
-			for (int i = 0; i < _len; ++i) {
-				std::cout << std::hex << (int)_data.data()[i] << " ";
-			}
-			std::cout << std::endl;
+			_len = HEADER_LEN + len;
 		}
 		wchar_t * data()
 		{

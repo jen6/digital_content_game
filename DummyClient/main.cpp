@@ -16,7 +16,7 @@ int main()
 #ifndef DOLOGINTEST
 	try {
 		boost::asio::io_service io;
-		boost::asio::io_service::work work(io);		//io_service가 종료되지 않도록 도와줌
+		//boost::asio::io_service::work work(io);		//io_service가 종료되지 않도록 도와줌
 		tcp::resolver resolver(io);
 		auto endpoint_iterator = resolver.resolve({ "127.0.0.1","1000" });
 
@@ -30,7 +30,7 @@ int main()
 		{
 			Packet::test t;
 			unsigned int buf = rd();
-			t.t = buf;
+			t.t = i;
 			std::cout << buf << std::endl;
 			auto p = t.Make_packet();
 			if (!p) {
