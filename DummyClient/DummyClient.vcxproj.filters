@@ -25,6 +25,12 @@
     <Filter Include="소스 파일\login">
       <UniqueIdentifier>{261e0f6d-6c5f-41c9-bdda-4723d3b6235a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="헤더 파일\util">
+      <UniqueIdentifier>{b7ae7d4a-a102-4af8-abbb-8f966d5bbe3b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\util">
+      <UniqueIdentifier>{64c90f3d-5609-4d7c-bdad-6ea8859ca74c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="packet\packet.h">
@@ -51,6 +57,9 @@
     <ClInclude Include="client.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="utils.h">
+      <Filter>헤더 파일\util</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="client.cpp">
@@ -67,6 +76,9 @@
     </ClCompile>
     <ClCompile Include="base64.cpp">
       <Filter>소스 파일\login</Filter>
+    </ClCompile>
+    <ClCompile Include="utils.cpp">
+      <Filter>소스 파일\util</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -73,6 +73,22 @@ void game_room::PassTask(std::function<Packet::packet_ptr()> task)
 	
 }
 
+DB::UserDBStruct game_session::SessionCheck(boost::array<wchar_t, Packet::MAX_LEN> buf)
+{
+	UINT len;
+	std::string session;
+
+	auto ptr = reinterpret_cast<const char *>(buf.data());
+	std::memcpy(&len, ptr + 4, 4);
+	//header에서 len 파싱
+
+	std::wstring wsession = std::wstring(buf.data() + Packet::HEADER_IDX, len);
+	std::string session = Utils::Ws2S(wsession);
+	//string으로 변환
+
+	
+}
+
 
 
 session_ptr game_session::create(asio::io_service& _io_service, game_room& room)
@@ -89,7 +105,6 @@ void game_session::start()
 {
 	std::string str = _socket.remote_endpoint().address().to_string();
 	Log::Logger::Instance()->L("client connected session : " + str);
-
 	asio::async_read(_socket,
 		asio::buffer(data_, Packet::HEADER_LEN),
 		boost::bind(
@@ -140,6 +155,63 @@ void game_session::read_header(const boost::system::error_code& error)
 	{
 		std::string str = _socket.remote_endpoint().address().to_string();
 		Log::Logger::Instance()->L("client disconnected session : " + str);
+	}
+}
+
+void game_session::check_session(const boost::system::error_code & error)
+{
+	if (!error)
+	{
+		Packet::Header header = Packet::ParseHeader(data_.data());
+
+		std::cout << "Parsed : " << static_cast<unsigned int>(header.packet_event) << ", " << header.packet_len << std::endl;
+
+		auto ptr = reinterpret_cast<char*>(data_.data()) + Packet::HEADER_LEN;
+
+		asio::async_read(_socket,
+			boost::asio::buffer(ptr, header.packet_len),
+			strand.wrap(
+				boost::bind(&game_session::handle_read_body,
+					this,
+					asio::placeholders::error)
+				));
+	}
+	else if (error == boost::asio::error::eof)
+	{
+		std::string str = _socket.remote_endpoint().address().to_string();
+		Log::Logger::Instance()->L("client disconnected session : " + str);
+	}
+}
+
+void game_session::handle_check_session(const boost::system::error_code & error)
+{
+	if (!error)
+	{
+		boost::array<wchar_t, 1024> buf(data_);
+
+		auto ptr = std::make_shared<Packet::Packet>(buf);
+
+		
+
+		std::function<Packet::packet_ptr()> task(
+			std::bind(&Packet::Parse,
+				ptr, _game_room.shared_from_this()
+				)
+			);
+
+		_game_room.PassTask(task);
+
+		asio::async_read(_socket,
+			asio::buffer(data_, Packet::HEADER_LEN),
+			boost::bind(
+				&game_session::read_header,
+				this,
+				asio::placeholders::error));
+	}
+	else {
+		std::string str = _socket.remote_endpoint().address().to_string();
+		Log::Logger::Instance()->L("client error read body session : " + str);
+		std::cout << "err cnt : " << error.message() << std::endl;
 	}
 }
 

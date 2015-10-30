@@ -91,6 +91,7 @@
     <ClCompile Include="packet_parser.cpp" />
     <ClCompile Include="sqlite3.c" />
     <ClCompile Include="sqlite_modern_cpp.cpp" />
+    <ClCompile Include="utils.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\sqlite_modern_cpp.h" />
@@ -108,6 +109,7 @@
     <ClInclude Include="sqlite3.h" />
     <ClInclude Include="sqlite3ext.h" />
     <ClInclude Include="ThreadPool.h" />
+    <ClInclude Include="utils.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ClassDiagram.cd" />

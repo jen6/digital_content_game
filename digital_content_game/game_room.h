@@ -13,6 +13,8 @@
 #include "packet.h"
 #include "ThreadPool.h"
 #include "Logger.h"
+#include "dbmanage.h"
+#include "utils.h"
 
 class game_room;
 class game_session;
@@ -46,6 +48,9 @@ private:
 	void handle_write(const boost::system::error_code& error);
 	void handle_read_body(const boost::system::error_code& error);
 	void read_header(const boost::system::error_code& error);
+	void check_session(const boost::system::error_code& error);
+	void handle_check_session(const boost::system::error_code& error);
+	DB::UserDBStruct SessionCheck(boost::array<wchar_t, Packet::MAX_LEN>);
 	//void handler(const boost::system::error_code & error, std::size_t recv_size);
 
 	std::mutex mtx;
@@ -53,6 +58,7 @@ private:
 	asio::ip::tcp::socket _socket;
 	boost::array<wchar_t, MAX_LENGTH> data_;
 	game_room& _game_room;
+	DB::DbManager dbmanage;
 };
 
 
@@ -74,6 +80,7 @@ public:
 	void broadcast(Packet::packet_ptr p); //모든 유저에게 데이터 브로드 케스트
 	void PassTask(std::function<Packet::packet_ptr()> task);
 	void UserDelete(session_ptr session);
+	
 
 	std::mutex mtx;
 

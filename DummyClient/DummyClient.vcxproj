@@ -88,6 +88,7 @@
     <ClInclude Include="packet\packet_parser.h" />
     <ClInclude Include="packet\packet_structure.h" />
     <ClInclude Include="sha256.h" />
+    <ClInclude Include="utils.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="base64.cpp" />
@@ -95,6 +96,7 @@
     <ClCompile Include="login.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="packet\packet_parser.cpp" />
+    <ClCompile Include="utils.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ClassDiagram.cd" />

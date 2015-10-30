@@ -54,7 +54,6 @@ namespace DB
 
 		//void Parse(sqxx::statement* st);
 		std::string UpdateSql();
-
 	};
 
 

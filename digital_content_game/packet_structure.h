@@ -214,5 +214,21 @@ namespace Packet {
 		}
 	};
 
+	class UserDBStruct {
+	public:
+		UserDBStruct() = default;
+		~UserDBStruct() = default;
+		UserDBStruct& operator=(UserDBStruct& user);
+		std::string Nickname;	//4
+		std::string Skill;		//5
+		int Exp;				//6
+		int PHp;				//7
+		int PAttack;			//8
+		int PDefence;			//9
+		int Level;				//10
+		int Quest;				//11
+		std::string Session;	//12
+	};
+
 
 }
