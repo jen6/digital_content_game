@@ -7,6 +7,7 @@
 #include <boost\array.hpp>
 
 #include "sha256.h"
+#include "utils.h"
 
 using boost::asio::ip::tcp;
 
@@ -17,7 +18,5 @@ namespace Login {
 	const int MAX_BUFFER = 1024;
 
 	
-	std::string DoLogin(std::string Id, std::string Pw);
-	
+	std::string DoLogin(std::wstring wId, std::wstring wPw);
 }
-

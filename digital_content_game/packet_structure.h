@@ -10,6 +10,8 @@
 #include <boost/serialization/access.hpp>
 
 #include "packet_events.h"
+#include "dbmanage.h"
+#include "utils.h"
 
 namespace Packet {
 	class Packet;
@@ -17,7 +19,7 @@ namespace Packet {
 
 	//자료형과 제한사항
 	
-	enum : unsigned int { WSTR_REALEN = 2, HEADER_IDX = 4, HEADER_LEN = 8, MAX_BODY_LEN = 1016 ,MAX_LEN = 1024 };
+	enum : unsigned int { ZERO_BODY = 0 ,WSTR_REALEN = 2, HEADER_IDX = 4, HEADER_LEN = 8, MAX_BODY_LEN = 1016 ,MAX_LEN = 1024 };
 
 	class Packet 
 		: public std::enable_shared_from_this<Packet> 
@@ -158,34 +160,34 @@ namespace Packet {
 		}
 	};
 
-	/*
+	
 	class InfoBody : public Body_interface, Header
 	{
 	public:
 		InfoBody() 
 		{
-			event = PACKET_EVENT::LOAD_INFO;
+			packet_event = PACKET_EVENT::SESSION_NO_MATCH;
+		}
+
+		InfoBody(PACKET_EVENT event)
+		{
+			packet_event = event;
 		}
 		
 		virtual ~InfoBody(){}
 
-		virtual Packet Make_packet()
+		virtual packet_ptr Make_packet() override
 		{
-			
+			return std::make_shared<Packet>(packet_event, L"", 0);
 		}
 
-		GAME_INFO info;
-		UINT set;
-		friend class boost::serialization::access;
-
-		template<class Archive>
-		void serialize(Archive& ar, const unsigned int version)
+		virtual void Make_Body(const wchar_t * packet_body, UINT len) override
 		{
-			ar& info;
-			ar& set;
+			//body가 없음으로 딱히 필요 x
+			return;
 		}
 	};
-	*/
+	
 
 	
 	class StateBody : public Body_interface, Header
@@ -214,21 +216,68 @@ namespace Packet {
 		}
 	};
 
-	class UserDBStruct {
+	class UserInfoBody : public Body_interface, Header {
 	public:
-		UserDBStruct() = default;
-		~UserDBStruct() = default;
-		UserDBStruct& operator=(UserDBStruct& user);
-		std::string Nickname;	//4
-		std::string Skill;		//5
+		int Idx;
+		std::wstring Nickname;	//4
+		std::wstring Skill;		//5
 		int Exp;				//6
 		int PHp;				//7
 		int PAttack;			//8
 		int PDefence;			//9
 		int Level;				//10
 		int Quest;				//11
-		std::string Session;	//12
+		std::wstring Session;	//12
+
+		friend class boost::serialization::access;
+
+		UserInfoBody() {
+			packet_event = PACKET_EVENT::USER_INFO;
+		}
+
+		UserInfoBody(const DB::UserDBStruct & user)
+		{
+			Nickname = Utils::S2Ws(user.Nickname);
+			Skill = Utils::S2Ws(user.Skill);
+			Session = Utils::S2Ws(user.UserSession);
+			Exp = user.Exp; PHp = user.PHp; PAttack = user.PAttack; PDefence = user.PDefence;
+			Level = user.Level; Quest = user.Quest; 
+		}
+		UserInfoBody(const DB::UserDBStruct && user)
+		{
+			Nickname = Utils::S2Ws(user.Nickname);
+			Skill = Utils::S2Ws(user.Skill);
+			Session = Utils::S2Ws(user.UserSession);
+			Exp = user.Exp; PHp = user.PHp; PAttack = user.PAttack; PDefence = user.PDefence;
+			Level = user.Level; Quest = user.Quest;
+		}
+
+		template<class Archive>
+		void serialize(Archive& ar, const unsigned int version)
+		{
+			ar& Idx;
+			ar& Nickname;
+			ar& Skill;
+			ar& Exp, PHp, PAttack , PDefence, Level, Quest, Session;
+		}
+		virtual packet_ptr Make_packet()
+		{
+			std::wstringstream ss;
+			boost::archive::text_woarchive oa(ss, boost::archive::no_header);
+			oa << const_cast<const UserInfoBody &>(*this);
+			std::wstring s = ss.str();
+			return std::make_shared<Packet>(packet_event, s.c_str(), s.length());
+		}
+
+		virtual void Make_Body(const wchar_t * packet_body, UINT len) {
+			boost::array<wchar_t, 1024> buf;
+			std::wmemcpy(buf.data(), packet_body, len);
+			buf[len] = 0;
+			std::wcout << buf.data() << std::endl;
+
+			std::wstringstream ss(buf.data());
+			boost::archive::text_wiarchive ia(ss, boost::archive::no_header);
+			ia >> *this;
+		}
 	};
-
-
 }

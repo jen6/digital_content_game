@@ -6,6 +6,7 @@
 
 #include "../sqlite_modern_cpp.h"
 
+#include "singleton.hpp"
 #include "DbSet.h"
 
 namespace DB 
@@ -39,7 +40,7 @@ namespace DB
 
 	class UserDBStruct {
 	public:
-		UserDBStruct() = default;
+		UserDBStruct();
 		~UserDBStruct() = default;
 		UserDBStruct& operator=(UserDBStruct& user);
 		std::string Nickname;	//4
@@ -50,14 +51,14 @@ namespace DB
 		int PDefence;			//9
 		int Level;				//10
 		int Quest;				//11
-		std::string Session;	//12
+		std::string UserSession;	//12
 
 		//void Parse(sqxx::statement* st);
 		std::string UpdateSql();
 	};
 
 
-	class DbManager
+	class DbManager : public CppSingleton<DbManager>
 	{
 	public:
 

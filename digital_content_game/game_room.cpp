@@ -73,23 +73,16 @@ void game_room::PassTask(std::function<Packet::packet_ptr()> task)
 	
 }
 
-DB::UserDBStruct game_session::SessionCheck(boost::array<wchar_t, Packet::MAX_LEN> buf)
+void game_room::UserDelete(session_ptr session)
 {
-	UINT len;
-	std::string session;
+	auto target = std::find(users.begin(), users.end(), session);
+	auto ptr = *target;
+	users.erase(target);
 
-	auto ptr = reinterpret_cast<const char *>(buf.data());
-	std::memcpy(&len, ptr + 4, 4);
-	//header에서 len 파싱
-
-	std::wstring wsession = std::wstring(buf.data() + Packet::HEADER_IDX, len);
-	std::string session = Utils::Ws2S(wsession);
-	//string으로 변환
-
-	
+	std::string log = "ptr cnt : " + ptr.use_count();
+	Log::Logger::Instance()->L(log);
+	//game 로직부분에서도 삭제하는 부분 필요
 }
-
-
 
 session_ptr game_session::create(asio::io_service& _io_service, game_room& room)
 {
@@ -155,6 +148,36 @@ void game_session::read_header(const boost::system::error_code& error)
 	{
 		std::string str = _socket.remote_endpoint().address().to_string();
 		Log::Logger::Instance()->L("client disconnected session : " + str);
+		_game_room.UserDelete(this->shared_from_this());
+	}
+}
+
+void game_session::handle_read_body(const boost::system::error_code & error)
+{
+	if (!error)
+	{
+		boost::array<wchar_t, 1024> buf(data_);
+
+		auto ptr = std::make_shared<Packet::Packet>(buf);
+		std::function<Packet::packet_ptr()> task(
+			std::bind(&Packet::Parse,
+				ptr, _game_room.shared_from_this()
+				)
+			);
+
+		_game_room.PassTask(task);
+
+		asio::async_read(_socket,
+			asio::buffer(data_, Packet::HEADER_LEN),
+			boost::bind(
+				&game_session::read_header,
+				this,
+				asio::placeholders::error));
+	}
+	else {
+		std::string str = _socket.remote_endpoint().address().to_string();
+		Log::Logger::Instance()->L("client error read body session : " + str);
+		std::cout << "err cnt : " << error.message() << std::endl;
 	}
 }
 
@@ -180,6 +203,7 @@ void game_session::check_session(const boost::system::error_code & error)
 	{
 		std::string str = _socket.remote_endpoint().address().to_string();
 		Log::Logger::Instance()->L("client disconnected session : " + str);
+		_game_room.UserDelete(this->shared_from_this());
 	}
 }
 
@@ -187,11 +211,10 @@ void game_session::handle_check_session(const boost::system::error_code & error)
 {
 	if (!error)
 	{
-		boost::array<wchar_t, 1024> buf(data_);
+		boost::array<wchar_t, Packet::MAX_LEN> buf(data_);
 
 		auto ptr = std::make_shared<Packet::Packet>(buf);
 
-		
 
 		std::function<Packet::packet_ptr()> task(
 			std::bind(&Packet::Parse,
@@ -215,32 +238,36 @@ void game_session::handle_check_session(const boost::system::error_code & error)
 	}
 }
 
-void game_session::handle_read_body(const boost::system::error_code & error)
+
+DB::UserDBStruct game_session::SessionCheck(boost::array<wchar_t, Packet::MAX_LEN> buf)
 {
-	if (!error)
+	UINT len;
+
+	auto ptr = reinterpret_cast<const char *>(buf.data());
+	std::memcpy(&len, ptr + 4, 4);
+	//header에서 len 파싱
+
+	std::wstring wsession = std::wstring(buf.data() + Packet::HEADER_IDX, len);
+	std::string session = Utils::Ws2S(wsession);
+	//string으로 변환
+
+	auto user = DB::DbManager::Instance()->GetUser(session);
+	//세션이 맞을 경우
+	if (user.UserSession == session)
 	{
-		boost::array<wchar_t, 1024> buf(data_);
-
-		auto ptr = std::make_shared<Packet::Packet>(buf);
-		std::function<Packet::packet_ptr()> task(
-			std::bind(&Packet::Parse,
-				ptr, _game_room.shared_from_this()
-				)
-		);
-
-		_game_room.PassTask(task);
-
-		asio::async_read(_socket,
-			asio::buffer(data_, Packet::HEADER_LEN),
-			boost::bind(
-				&game_session::read_header,
-				this,
-				asio::placeholders::error));
+		Packet::UserInfoBody userBody(user);
+		auto packet = userBody.Make_packet();
+		send(packet);
+		//game데이터 저장하는 vector에 추가 하는 동작 추가
+		return user;
 	}
-	else {
-		std::string str = _socket.remote_endpoint().address().to_string();
-		Log::Logger::Instance()->L("client error read body session : " + str);
-		std::cout << "err cnt : " << error.message() << std::endl;
+	else
+	{
+		Packet::InfoBody info(Packet::PACKET_EVENT::SESSION_NO_MATCH);
+		auto packet = info.Make_packet();
+		send(packet);
+		_game_room.UserDelete(this->shared_from_this());
+		//세션 추가된것을 session vector에서 지워줘야함
 	}
 }
 

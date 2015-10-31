@@ -36,6 +36,7 @@ public:
 	client() = delete;
 
 	void send(Packet::packet_ptr& );
+	void reconnect(tcp::resolver::iterator);
 	~client();
 };
 

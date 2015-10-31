@@ -8,49 +8,60 @@
 int main()
 {
 #ifdef DOLOGINTEST
-	std::string str = Login::DoLogin("googler", "googleisbest123");
+	std::string str = Login::DoLogin(L"googler", L"googleisbest123");
 	std::cout << str << std::endl;
 #endif
 
 #ifndef DOLOGINTEST
 	try {
 		boost::asio::io_service io;
-		//boost::asio::io_service::work work(io);		//io_service가 종료되지 않도록 도와줌
+		boost::asio::io_service::work work(io);		//io_service가 종료되지 않도록 도와줌
 		tcp::resolver resolver(io);
 		auto endpoint_iterator = resolver.resolve({ "127.0.0.1","1000" });
 
 		std::thread t1(boost::bind(&boost::asio::io_service::run, &io));
 		client cli(io, endpoint_iterator);
+		while (1) 
+		{
+			for (auto i = 0; i < 30; ++i)
+			{
+				Packet::MoveBody t;
+				t.x = i;
+				t.y = i;
+				auto p = t.Make_packet();
+				if (!p) {
+					std::cout << "fuck!" << std::endl;
+				}
+				cli.send(p);
+				std::cout << "send cnt = " << std::dec << i << std::endl;
+			}
+			while (1)
+			{
+				std::string c;
+				std::cin >> c;
+				if (c == "end")
+				{
+					cli.close();
+					t1.detach();
+					break;
+				}
 
-		for (auto i = 0; i < 30; ++i)
-		{
-			Packet::MoveBody t;
-			t.x = i;
-			t.y = i;
-			auto p = t.Make_packet();
-			if (!p) {
-				std::cout << "fuck!" << std::endl;
+				else if (c == "portal")
+				{
+					std::cin >> c;
+					auto endpoint = resolver.resolve({ "127.0.0.1", c.c_str() });
+					cli.reconnect(endpoint);
+				}
+
+				if (io.stopped())
+				{
+					std::cout << "io_service stopped" << std::endl;
+					break;
+				}
 			}
-			cli.send(p);
-			std::cout << "send cnt = " << std::dec << i << std::endl;
+			if (t1.joinable())
+				t1.join();
 		}
-		while (1)
-		{
-			std::string c;
-			std::cin >> c;
-			if (c == "end")
-			{
-				cli.close();
-				break;
-			}
-				
-			if (io.stopped())
-			{
-				std::cout << "io_service stopped" << std::endl;
-				break;
-			}
-		}
-		t1.join();
 	}
 	catch (std::exception& e)
 	{

@@ -30,6 +30,12 @@ void client::send(Packet::packet_ptr& p)
 	);
 }
 
+void client::reconnect(tcp::resolver::iterator resolver)
+{
+	close();
+	connect(resolver);
+}
+
 void client::handle_send(const boost::system::error_code & error) {
 	if (!error)
 	{

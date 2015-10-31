@@ -33,9 +33,9 @@ namespace DB
 			user.Nickname = NickName; user.Skill = Skill;
 			user.Exp = Exp; user.PHp = PHp; user.PAttack = PAttack;
 			user.PDefence = PDefence; user.Level = Level; user.Quest = Quest;
-			user.Session = Session;
+			user.UserSession = Session;
 		};
-		if (session != user.Session)
+		if (session != user.UserSession)
 		{
 			throw std::exception("fuck");
 		}
@@ -48,6 +48,14 @@ namespace DB
 		db << sql;
 	}
 
+	UserDBStruct::UserDBStruct()
+	{
+		Nickname = "";
+		Skill = ""; UserSession = "";
+		Exp = 0; PHp = 0; PAttack = 0; PDefence = 0;
+		Level = 0; Quest = 0;
+	}
+
 	UserDBStruct & UserDBStruct::operator=(UserDBStruct & user)
 	{
 		Nickname = user.Nickname;
@@ -58,7 +66,7 @@ namespace DB
 		PDefence = user.PDefence;
 		Level = user.Level;
 		Quest = user.Quest;
-		Session = user.Session;
+		UserSession = user.UserSession;
 		return *this;
 	}
 
@@ -72,8 +80,8 @@ namespace DB
 		ret += TABLENAME + "PAttack" + " = " + boost::lexical_cast<std::string>(PDefence) + ", ";
 		ret += TABLENAME + "Level" + " = " + boost::lexical_cast<std::string>(Level) + ", ";
 		ret += TABLENAME + "Quest" + " = " + boost::lexical_cast<std::string>(Quest) + ", ";
-		ret += TABLENAME + "LoginSession" + " = '" + Session + "' ";
-		ret += "where LoginSession = '" + Session + "' ;";
+		ret += TABLENAME + "LoginSession" + " = '" + UserSession + "' ";
+		ret += "where LoginSession = '" + UserSession + "' ;";
 		std::cout << ret << std::endl;
 		return ret;
 	}

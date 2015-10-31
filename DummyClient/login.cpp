@@ -4,7 +4,7 @@
 namespace Login 
 {
 	
-	std::string DoLogin(std::string Id, std::string Pw)
+	std::string DoLogin(std::wstring wId, std::wstring wPw)
 	{
 		boost::asio::io_service io_service;
 		tcp::resolver resolver(io_service);
@@ -23,6 +23,10 @@ namespace Login
 		// 접속 실패인지 확인 
 		if (error)
 			return FAIL_MSG;
+
+		std::string Id = Utils::Ws2S(wId);
+		std::string Pw = Utils::Ws2S(wPw);
+		//string으로 변환
 
 		//서버로 보낼 문자열 조합
 		std::string buf = Id + " ";

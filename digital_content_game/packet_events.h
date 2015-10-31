@@ -8,6 +8,10 @@ namespace Packet
 	{
 		GAME_START = 0,
 
+		SESSION_NO_MATCH, //세션 가지고 올바른 유저를 찾지 못했을 경우
+
+		USER_INFO,		//유저 자신에 대한 정보 받기
+
 		LOAD_INFO,		//게임 시작 정보들 관련 정보 로드
 
 		OBJECT_STATECH, //오브젝트 스텟변경

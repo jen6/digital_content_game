@@ -16,7 +16,7 @@ namespace Packet {
 
 	//자료형과 제한사항
 	
-	enum : unsigned int { WSTR_REALEN=2,HEADER_IDX = 4, HEADER_LEN = 8, MAX_BODY_LEN = 1016 ,MAX_LEN = 1024 };
+	enum : unsigned int { ZERO_BODY = 0 ,WSTR_REALEN=2, HEADER_IDX = 4, HEADER_LEN = 8, MAX_BODY_LEN = 1016 ,MAX_LEN = 1024 };
 
 	class Ticket
 	{
@@ -56,15 +56,6 @@ namespace Packet {
 		{
 			return _len;
 		}
-		//TODO 나중에 필요하면 막상 코드 써보니 굳이 필요 x
-		//void set_size(UINT size)
-		//{
-		//	_size = size;
-		//	if (_size > MAX_BODY_LEN)
-		//	{
-		//		_size = MAX_BODY_LEN;
-		//	}
-		//}
 	private:
 		boost::array<wchar_t, MAX_LEN> _data;
 		size_t _len = 0;
@@ -173,45 +164,43 @@ namespace Packet {
 		}
 	};
 
-	/*
+
 	class InfoBody : public Body_interface, Header
 	{
 	public:
-		InfoBody() 
+		InfoBody()
 		{
-			event = PACKET_EVENT::LOAD_INFO;
-		}
-		
-		virtual ~InfoBody(){}
-
-		virtual Packet Make_packet()
-		{
-			
+			packet_event = PACKET_EVENT::SESSION_NO_MATCH;
 		}
 
-		GAME_INFO info;
-		UINT set;
-		friend class boost::serialization::access;
+		virtual ~InfoBody() {}
 
-		template<class Archive>
-		void serialize(Archive& ar, const unsigned int version)
+		virtual packet_ptr Make_packet() override
 		{
-			ar& info;
-			ar& set;
+			return std::make_shared<Packet>(packet_event, L"", 0);
+		}
+
+		virtual void Make_Body(const wchar_t * packet_body, UINT len) override
+		{
+			//body가 없음으로 딱히 필요 x
+			return;
 		}
 	};
 
+
 	class StateBody : public Body_interface, Header
 	{
+	public:
+		OBJECT_STATE state;
+		UINT object_idx;
+		float x, y;
+		UINT damage;
+
 		StateBody()
 		{
 			packet_event = PACKET_EVENT::OBJECT_STATECH;
 		}
-		virtual ~StateBody(){}
-		OBJECT_STATE state;
-		UINT object_idx;
-		UINT x, y;
-		UINT damage;
+		virtual ~StateBody() {}
 
 		friend class boost::serialization::access;
 
@@ -223,5 +212,53 @@ namespace Packet {
 			ar& x, y;
 			ar& damage;
 		}
-	};*/
+	};
+
+	class UserInfoBody : public Body_interface, Header {
+	public:
+		int Idx;
+		std::wstring Nickname;	//4
+		std::wstring Skill;		//5
+		int Exp;				//6
+		int PHp;				//7
+		int PAttack;			//8
+		int PDefence;			//9
+		int Level;				//10
+		int Quest;				//11
+		std::wstring Session;	//12
+
+		friend class boost::serialization::access;
+
+		UserInfoBody() {
+			packet_event = PACKET_EVENT::USER_INFO;
+		}
+
+		template<class Archive>
+		void serialize(Archive& ar, const unsigned int version)
+		{
+			ar& Idx;
+			ar& Nickname;
+			ar& Skill;
+			ar& Exp, PHp, PAttack, PDefence, Level, Quest, Session;
+		}
+		virtual packet_ptr Make_packet()
+		{
+			std::wstringstream ss;
+			boost::archive::text_woarchive oa(ss, boost::archive::no_header);
+			oa << const_cast<const UserInfoBody &>(*this);
+			std::wstring s = ss.str();
+			return std::make_shared<Packet>(packet_event, s.c_str(), s.length());
+		}
+
+		virtual void Make_Body(const wchar_t * packet_body, UINT len) {
+			boost::array<wchar_t, 1024> buf;
+			std::wmemcpy(buf.data(), packet_body, len);
+			buf[len] = 0;
+			std::wcout << buf.data() << std::endl;
+
+			std::wstringstream ss(buf.data());
+			boost::archive::text_wiarchive ia(ss, boost::archive::no_header);
+			ia >> *this;
+		}
+	};
 }

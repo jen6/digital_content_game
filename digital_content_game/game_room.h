@@ -30,7 +30,7 @@ namespace asio =  boost::asio;
 
 
 //각각 유저의 소켓과 결과 보내는 함수가 있음
-class game_session
+class game_session 
 	: public std::enable_shared_from_this<game_session>
 {
 public:
@@ -53,12 +53,10 @@ private:
 	DB::UserDBStruct SessionCheck(boost::array<wchar_t, Packet::MAX_LEN>);
 	//void handler(const boost::system::error_code & error, std::size_t recv_size);
 
-	std::mutex mtx;
 	asio::strand strand;
 	asio::ip::tcp::socket _socket;
 	boost::array<wchar_t, MAX_LENGTH> data_;
 	game_room& _game_room;
-	DB::DbManager dbmanage;
 };
 
 

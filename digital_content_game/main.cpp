@@ -13,20 +13,18 @@
 int main() {
 #ifdef DEBUG_MODE
 	try {
-	DB::DbManager dbmanage;
-	
 
 	std::string session = "jeJZgg0Y_wJqqeS7_NmJvtVp2ZKtoqF-991dmM9GFwc=";
-	DB::UserDBStruct user = dbmanage.GetUser(session);
+	DB::UserDBStruct user = DB::DbManager::Instance()->GetUser(session);
 	user.Nickname = "fuck";
 	user.Level = 1;
-	dbmanage.Update(user);
+	DB::DbManager::Instance()->Update(user);
 
-	user = dbmanage.GetUser(session);
+	user = DB::DbManager::Instance()->GetUser(session);
 	std::cout << user.Nickname << std::endl;
 
 	session = "1";
-	user = dbmanage.GetUser(session);
+	user = DB::DbManager::Instance()->GetUser(session);
 	std::cout << user.Nickname << std::endl;
 
 	} 
