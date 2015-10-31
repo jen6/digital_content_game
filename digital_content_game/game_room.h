@@ -80,7 +80,8 @@ public:
 	void UserDelete(session_ptr session);
 	
 
-	std::mutex mtx;
+	std::mutex mtx; 
+	std::string roomnum;
 
 	friend class game;
 private:
@@ -91,4 +92,6 @@ private:
 	std::vector<session_ptr> users;	//유저 목록
 	std::deque<Packet::packet_ptr> msg_queue;
 	ThreadPoolPtr pool;
+
+	
 };

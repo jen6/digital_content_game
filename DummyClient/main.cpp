@@ -53,15 +53,21 @@ int main()
 					cli.reconnect(endpoint);
 				}
 
+				else if (c == "test")
+				{
+					break;
+				}
+
 				if (io.stopped())
 				{
 					std::cout << "io_service stopped" << std::endl;
 					break;
 				}
 			}
-			if (t1.joinable())
-				t1.join();
+			
 		}
+		if (t1.joinable())
+			t1.join();
 	}
 	catch (std::exception& e)
 	{

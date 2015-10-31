@@ -12,6 +12,7 @@ game_room::game_room(asio::io_service &_io_service, unsigned short port_num, Thr
 	: _acceptor(_io_service, asio::ip::tcp::endpoint(asio::ip::tcp::v4(), port_num)),
 	pool(tp)
 {
+	roomnum = boost::lexical_cast<std::string>(port_num);
 	start_accept();
 }
 
@@ -63,7 +64,7 @@ void game_room::PassTask(std::function<Packet::packet_ptr()> task)
 		}
 		else
 		{
-			Log::Logger::Instance()->L("error in pass task");
+			Log::Logger::Instance()->L("error in pass task in room" + roomnum);
 		}
 	}
 	catch (std::exception& e)
@@ -80,7 +81,7 @@ void game_room::UserDelete(session_ptr session)
 	users.erase(target);
 
 	std::string log = "ptr cnt : " + ptr.use_count();
-	Log::Logger::Instance()->L(log);
+	Log::Logger::Instance()->L(log + " in room " + roomnum);
 	//game 로직부분에서도 삭제하는 부분 필요
 }
 
@@ -97,7 +98,7 @@ asio::ip::tcp::socket & game_session::socket()
 void game_session::start()
 {
 	std::string str = _socket.remote_endpoint().address().to_string();
-	Log::Logger::Instance()->L("client connected session : " + str);
+	Log::Logger::Instance()->L("client connected session : " + str + " in room " + _game_room.roomnum);
 	asio::async_read(_socket,
 		asio::buffer(data_, Packet::HEADER_LEN),
 		boost::bind(
@@ -121,7 +122,7 @@ void game_session::close()
 		}
 		else
 		{
-			Log::Logger::Instance()->L("socket closed");
+			Log::Logger::Instance()->L("socket closed in room " + _game_room.roomnum);
 		}
 	}
 }
@@ -147,7 +148,7 @@ void game_session::read_header(const boost::system::error_code& error)
 	else if (error == boost::asio::error::eof)
 	{
 		std::string str = _socket.remote_endpoint().address().to_string();
-		Log::Logger::Instance()->L("client disconnected session : " + str);
+		Log::Logger::Instance()->L("client disconnected session : " + str + " in room " + _game_room.roomnum);
 		_game_room.UserDelete(this->shared_from_this());
 	}
 }
@@ -237,7 +238,6 @@ void game_session::handle_check_session(const boost::system::error_code & error)
 		std::cout << "err cnt : " << error.message() << std::endl;
 	}
 }
-
 
 DB::UserDBStruct game_session::SessionCheck(boost::array<wchar_t, Packet::MAX_LEN> buf)
 {
