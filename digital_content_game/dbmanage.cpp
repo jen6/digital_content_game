@@ -29,7 +29,6 @@ namespace DB
 				int Exp, int PHp, int PAttack, int PDefence, int Level, int Quest,
 				std::string Session)
 		{
-			std::cout << NickName << " " << Session << std::endl;
 			user.Nickname = NickName; user.Skill = Skill;
 			user.Exp = Exp; user.PHp = PHp; user.PAttack = PAttack;
 			user.PDefence = PDefence; user.Level = Level; user.Quest = Quest;
@@ -37,6 +36,8 @@ namespace DB
 		};
 		if (session != user.UserSession)
 		{
+			std::cout << "db session = " << user.UserSession << std::endl;
+			std::cout << "input session = " << user.UserSession << std::endl;
 			throw std::exception("fuck");
 		}
 		return user;

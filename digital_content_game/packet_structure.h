@@ -52,6 +52,11 @@ namespace Packet {
 			return _data.data() + HEADER_LEN;
 		}
 
+		size_t body_length() const
+		{
+			return _len - 8;
+		}
+
 		size_t length() const
 		{
 			return _len;
@@ -111,6 +116,43 @@ namespace Packet {
 			std::wmemcpy(buf.data(), packet_body, len);
 			buf[len] = 0;
 			std::wcout << buf.data() << std::endl;
+			std::wstringstream ss(buf.data());
+			boost::archive::text_wiarchive ia(ss, boost::archive::no_header);
+			ia >> *this;
+		}
+	};
+
+	class SessionBody : public Body_interface, Header
+	{
+	public:
+		std::wstring UserSession;
+
+		SessionBody()
+		{
+			packet_event = PACKET_EVENT::CHECK_SESSION;
+		}
+
+		template<class Archive>
+		void serialize(Archive& ar, const unsigned int version)
+		{
+			ar& UserSession;
+		}
+
+		virtual packet_ptr Make_packet()
+		{
+			std::wstringstream ss;
+			boost::archive::text_woarchive oa(ss, boost::archive::no_header);
+			oa << const_cast<const SessionBody &>(*this);
+			std::wstring s = ss.str();
+			return std::make_shared<Packet>(packet_event, s.c_str(), s.length());
+		}
+
+		virtual void Make_Body(const wchar_t * packet_body, UINT len) {
+			boost::array<wchar_t, 1024> buf;
+			std::wmemcpy(buf.data(), packet_body, len);
+			buf[len] = 0;
+			std::wcout << buf.data() << std::endl;
+
 			std::wstringstream ss(buf.data());
 			boost::archive::text_wiarchive ia(ss, boost::archive::no_header);
 			ia >> *this;
@@ -237,6 +279,7 @@ namespace Packet {
 
 		UserInfoBody(const DB::UserDBStruct & user)
 		{
+			packet_event = PACKET_EVENT::USER_INFO;
 			Nickname = Utils::S2Ws(user.Nickname);
 			Skill = Utils::S2Ws(user.Skill);
 			Session = Utils::S2Ws(user.UserSession);
@@ -245,6 +288,7 @@ namespace Packet {
 		}
 		UserInfoBody(const DB::UserDBStruct && user)
 		{
+			packet_event = PACKET_EVENT::USER_INFO;
 			Nickname = Utils::S2Ws(user.Nickname);
 			Skill = Utils::S2Ws(user.Skill);
 			Session = Utils::S2Ws(user.UserSession);

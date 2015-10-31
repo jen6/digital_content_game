@@ -35,6 +35,9 @@ public:
 	void close();
 	client() = delete;
 
+	Packet::UserInfoBody* user;
+	void sendSession(std::wstring);
+	void move(float , float );
 	void send(Packet::packet_ptr& );
 	void reconnect(tcp::resolver::iterator);
 	~client();

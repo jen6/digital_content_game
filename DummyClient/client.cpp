@@ -20,6 +20,22 @@ void client::connect(tcp::resolver::iterator endpoint_iterator)
 	});
 }
 
+void client::sendSession(std::wstring session)
+{
+	Packet::SessionBody body;
+	body.UserSession = session;
+	send(body.Make_packet());
+}
+
+void client::move(float x, float y)
+{
+	Packet::MoveBody body;
+	body.object_idx = user->Idx;
+	body.x = x;
+	body.y = y;
+	send(body.Make_packet());
+}
+
 void client::send(Packet::packet_ptr& p)
 {
 	std::wcout << L"send : " << p.get()->data() << std::endl;
@@ -65,7 +81,7 @@ void client::handle_read_body(Packet::packet_ptr p, size_t byte_transfer, const 
 {
 	if (!error)
 	{
-		Packet::Parse(p);
+		Packet::Parse(p, *this);
 		asio::async_read(_socket, asio::buffer(recv_buf.get()->data(), Packet::HEADER_LEN),
 			strand.wrap(
 				boost::bind(&client::read_header, this, asio::placeholders::error)

@@ -8,6 +8,10 @@ namespace Packet
 	{
 		GAME_START = 0,
 
+		CHECK_SESSION,		//세션 체크
+
+		PORTAL_USERINFO,	//포탈타고 유저 정보 보낼때
+
 		SESSION_NO_MATCH, //세션 가지고 올바른 유저를 찾지 못했을 경우
 
 		USER_INFO,		//유저 자신에 대한 정보 받기

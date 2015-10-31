@@ -1,5 +1,6 @@
 //이 파일 각각 case에다 처리할수있는 함수 넣어주면 됨.
 #include "packet_parser.h"
+#include <iostream>
 namespace Packet 
 {
 	//헤더에서 패킷 종류와 길이 파싱
@@ -15,7 +16,7 @@ namespace Packet
 	}
 
 	//패킷 바디를 파싱
-	void Parse(packet_ptr p)
+	void Parse(packet_ptr p, client& cle)
 	{
 		UINT length, event;
 		wchar_t * data_ptr = p.get()->data();
@@ -40,6 +41,18 @@ namespace Packet
 			std::cout << "recved t : "<< std::dec << dynamic_cast<test*>(ptr)->t << std::endl;
 			break;
 
+		case PACKET_EVENT::USER_INFO:
+			ptr = new UserInfoBody();
+			ptr->Make_Body(data_ptr + HEADER_IDX, length);
+			cle.user = dynamic_cast<UserInfoBody *>(ptr);
+			break;
+
+		case PACKET_EVENT::SESSION_NO_MATCH:
+			std::cout << "no session match" << std::endl;
+			cle.close();
+			//세션 안맞을때 처리할 방법
+			break;
+
 		case PACKET_EVENT::OBJECT_MOVE:
 			ptr = new MoveBody();
 			try {
@@ -49,7 +62,10 @@ namespace Packet
 			{
 				std::cerr << e.what() << std::endl;
 			}
-			std::cout << "recved move : " <<  dynamic_cast<MoveBody*>(ptr)->x
+			std::cout << "recved move idx :  "
+				<< dynamic_cast<MoveBody*>(ptr)->object_idx
+				<<"\n- x, y : "
+				<<  dynamic_cast<MoveBody*>(ptr)->x
 				<< ", " << dynamic_cast<MoveBody*>(ptr)->y << std::endl;
 			break;
 			//case PACKET_EVENT::LOAD_INFO:

@@ -52,26 +52,16 @@ void game_room::broadcast(Packet::packet_ptr p)
 	}
 }
 
-void game_room::PassTask(std::function<Packet::packet_ptr()> task)
+void game_room::PassTask(std::function<void()> task)
 {
 	auto packet_fut = pool.get()->enqueue(task);
 	try {
-		packet_fut.wait();
-		auto packet = packet_fut.get();
-		if (packet)
-		{
-			broadcast(packet);
-		}
-		else
-		{
-			Log::Logger::Instance()->L("error in pass task in room" + roomnum);
-		}
+		packet_fut.get();
 	}
 	catch (std::exception& e)
 	{
 		std::cerr << e.what() << std::endl;
 	}
-	
 }
 
 void game_room::UserDelete(session_ptr session)
@@ -160,9 +150,9 @@ void game_session::handle_read_body(const boost::system::error_code & error)
 		boost::array<wchar_t, 1024> buf(data_);
 
 		auto ptr = std::make_shared<Packet::Packet>(buf);
-		std::function<Packet::packet_ptr()> task(
+		std::function<void()> task(
 			std::bind(&Packet::Parse,
-				ptr, _game_room.shared_from_this()
+				ptr, this->shared_from_this()
 				)
 			);
 
@@ -217,9 +207,9 @@ void game_session::handle_check_session(const boost::system::error_code & error)
 		auto ptr = std::make_shared<Packet::Packet>(buf);
 
 
-		std::function<Packet::packet_ptr()> task(
+		std::function<void()> task(
 			std::bind(&Packet::Parse,
-				ptr, _game_room.shared_from_this()
+				ptr, this->shared_from_this()
 				)
 			);
 
@@ -239,34 +229,26 @@ void game_session::handle_check_session(const boost::system::error_code & error)
 	}
 }
 
-DB::UserDBStruct game_session::SessionCheck(boost::array<wchar_t, Packet::MAX_LEN> buf)
+Packet::Body_interface* game_session::SessionCheck(std::wstring wsession)
 {
-	UINT len;
-
-	auto ptr = reinterpret_cast<const char *>(buf.data());
-	std::memcpy(&len, ptr + 4, 4);
-	//header에서 len 파싱
-
-	std::wstring wsession = std::wstring(buf.data() + Packet::HEADER_IDX, len);
 	std::string session = Utils::Ws2S(wsession);
 	//string으로 변환
+	std::cout << "recv session : " << session << std::endl;
 
 	auto user = DB::DbManager::Instance()->GetUser(session);
+	std::cout << "recv session : " << user.UserSession << std::endl;
 	//세션이 맞을 경우
 	if (user.UserSession == session)
 	{
-		Packet::UserInfoBody userBody(user);
-		auto packet = userBody.Make_packet();
-		send(packet);
-		//game데이터 저장하는 vector에 추가 하는 동작 추가
-		return user;
+		Packet::UserInfoBody *  userBody = new Packet::UserInfoBody(user);
+		info = userBody;
+		return dynamic_cast<Packet::Body_interface*>(userBody);
+		Log::Logger::Instance()->L("session match : " + session);
 	}
 	else
 	{
-		Packet::InfoBody info(Packet::PACKET_EVENT::SESSION_NO_MATCH);
-		auto packet = info.Make_packet();
-		send(packet);
 		_game_room.UserDelete(this->shared_from_this());
+		return nullptr;
 		//세션 추가된것을 session vector에서 지워줘야함
 	}
 }

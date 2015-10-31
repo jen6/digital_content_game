@@ -13,5 +13,5 @@ namespace Packet
 
 	//template<class T>
 	//inline packet_ptr Parse(packet_ptr p, std::shared_ptr<T> room)
-	packet_ptr Parse(packet_ptr p, room_ptr room);
+	void Parse(packet_ptr p, session_ptr session);
 }

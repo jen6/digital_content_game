@@ -84,6 +84,9 @@
     <ClCompile Include="utils.cpp">
       <Filter>소스 파일\util</Filter>
     </ClCompile>
+    <ClCompile Include="server_logic.cpp">
+      <Filter>소스 파일\logic</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="game_room.h">
@@ -133,6 +136,9 @@
     </ClInclude>
     <ClInclude Include="utils.h">
       <Filter>헤더 파일\Util</Filter>
+    </ClInclude>
+    <ClInclude Include="server_logic.h">
+      <Filter>헤더 파일\logic</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
