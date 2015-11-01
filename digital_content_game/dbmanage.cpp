@@ -29,10 +29,11 @@ namespace DB
 				int Exp, int PHp, int PAttack, int PDefence, int Level, int Quest,
 				std::string Session)
 		{
-			user.Nickname = NickName; user.Skill = Skill;
+			user.Nickname = NickName; user.Skill = "fuckfuck";
 			user.Exp = Exp; user.PHp = PHp; user.PAttack = PAttack;
 			user.PDefence = PDefence; user.Level = Level; user.Quest = Quest;
 			user.UserSession = Session;
+
 		};
 		if (session != user.UserSession)
 		{

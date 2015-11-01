@@ -22,7 +22,7 @@ namespace Packet
 
 		std::memcpy(&event, Pdata, sizeof(UINT));
 		std::memcpy(&length, Pdata + 4, sizeof(UINT));
-		Body_interface * ptr, * userinfobuf;
+		Body_interface * ptr = nullptr, * buf = nullptr;
 		packet_ptr ret;
 
 		switch (static_cast<PACKET_EVENT>(event))
@@ -42,21 +42,47 @@ namespace Packet
 			std::lock_guard<std::mutex> lock(session.get()->_game_room.mtx);
 			ptr = new SessionBody();
 			ptr->Make_Body(data_ptr + HEADER_IDX, length);
-			userinfobuf = session.get()->SessionCheck(dynamic_cast<SessionBody*>(ptr)->UserSession);
-			if (userinfobuf != nullptr)//세션이 정상적으로 인증됐을때
+			buf = session.get()->SessionCheck(dynamic_cast<SessionBody*>(ptr)->UserSession);
+			if (buf != nullptr)//세션이 정상적으로 인증됐을때
 			{
-				dynamic_cast<UserInfoBody*>(userinfobuf)->Idx 
-					= session.get()->_game_room.map.GetUnitNum();
-				session.get()->_game_room.map.AddUnit(0);
-				ret = userinfobuf->Make_packet();
+				ret = buf->Make_packet();
+				ret->get_body();
 			}
 			else
 			{
-				InfoBody info(PACKET_EVENT::SESSION_NO_MATCH);
-				ret = info.Make_packet();
+				buf = new InfoBody(PACKET_EVENT::SESSION_NO_MATCH);
+				ret = buf->Make_packet();
 			}
 		}
 			session.get()->send(ret);
+			Log::Logger::Instance()->L("complete send session");
+			break;
+		case PACKET_EVENT::REQUEST_ENTER_MAP:
+		{
+			Log::Logger::Instance()->L("request map");
+			std::lock_guard<std::mutex> lock(session.get()->_game_room.mtx);
+			ptr = new EnterMapBody();
+			for (int i = 0; i < length; i++)
+			{
+				std::cout << (data_ptr + HEADER_IDX)[i] << " ";
+			}
+			std::cout << std::endl;
+
+			ptr->Make_Body(data_ptr + HEADER_IDX, length);
+			std::cout << length << std::endl;	
+			EnterMapBody* body = dynamic_cast<EnterMapBody*>(ptr);
+			session.get()->_game_room.map.AddUnit(body->name,
+			{ body->hp, body->att, body->def }, body->nowhp, { body->x, body->y },
+				(Logic::UNIT_ROTATE)body->rotate);
+		}
+		Log::Logger::Instance()->L("fuck");
+		buf = new InfoBody(PACKET_EVENT::ACCEPT_ENTER);
+		session.get()->send(buf->Make_packet());
+
+		session.get()->_game_room.PassTask(boost::bind(
+			&Logic::MAP::SendUnitInfo<game_session>,
+			&session.get()->_game_room.map, session));
+		//userinfo보내는거 쓰레드풀에 넣기
 			break;
 
 		case PACKET_EVENT::OBJECT_MOVE:
@@ -66,14 +92,24 @@ namespace Packet
 			ptr->Make_Body(data_ptr + HEADER_IDX, length);
 			ret = ptr->Make_packet();
 			MoveBody * body = dynamic_cast<MoveBody *>(ptr);
-			session.get()->_game_room.map.MoveUnit(body->object_idx, body->x, body->y);
+			session.get()->_game_room.map.UnitMove(body->object_idx, 
+				Logic::D2D1_POINT_2F(body->x, body->y));
 		}
 			session.get()->broadcast(ret);
 			break;
 		default:
+			ptr = nullptr;
 			std::cout << "no match" << std::endl;
 			std::cout << "event : " << event << ",  tester : " << static_cast<UINT>(PACKET_EVENT::TESTER) << std::endl;
 			break;
+		}
+		if (ptr != nullptr)
+		{
+			delete ptr;
+		}
+		if (buf != nullptr)
+		{
+			delete buf;
 		}
 	}
 }

@@ -54,17 +54,14 @@
     <ClInclude Include="sha256.h">
       <Filter>헤더 파일\login</Filter>
     </ClInclude>
-    <ClInclude Include="client.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="utils.h">
       <Filter>헤더 파일\util</Filter>
     </ClInclude>
+    <ClInclude Include="client_sock.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="client.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="main.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
@@ -79,6 +76,9 @@
     </ClCompile>
     <ClCompile Include="utils.cpp">
       <Filter>소스 파일\util</Filter>
+    </ClCompile>
+    <ClCompile Include="client_sock.cpp">
+      <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

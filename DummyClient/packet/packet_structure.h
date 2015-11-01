@@ -81,6 +81,58 @@ namespace Packet {
 		virtual packet_ptr Make_packet() = 0; //packet ¸¸µé±â
 	};
 
+	class EnterMapBody : public Body_interface, Header
+	{
+	public:
+		friend class boost::serialization::access;
+		/////
+		template<class Archive>
+		void serialize(Archive& ar, const unsigned int version)
+		{
+			ar& name
+			& hp
+			&att
+			&def
+			&nowhp
+			&x
+			&y
+			&rotate;
+		}
+		std::string name;
+		int hp;
+		int att;
+		int def;
+		int nowhp;
+		int x;
+		int y;
+		int rotate;
+
+		EnterMapBody()
+		{
+			packet_event = PACKET_EVENT::REQUEST_ENTER_MAP;
+		}
+		virtual ~EnterMapBody() {}
+		/////
+		virtual packet_ptr Make_packet()
+		{
+			std::wstringstream ss;
+			boost::archive::text_woarchive oa(ss, boost::archive::no_header);
+			oa << const_cast<const EnterMapBody &>(*this);
+			std::wstring s = ss.str();
+			return std::make_shared<Packet>(packet_event, s.c_str(), s.length());
+		}
+
+		virtual void Make_Body(const wchar_t * packet_body, UINT len) {
+			boost::array<wchar_t, 1024> buf;
+			std::wmemcpy(buf.data(), packet_body, len);
+			buf[len] = 0;
+			std::wcout << buf.data() << std::endl;
+			std::wstringstream ss(buf.data());
+			boost::archive::text_wiarchive ia(ss, boost::archive::no_header);
+			ia >> *this;
+		}
+	};
+
 	class test : public Body_interface, Header
 	{
 	public:
@@ -235,7 +287,7 @@ namespace Packet {
 
 		StateBody()
 		{
-			packet_event = PACKET_EVENT::OBJECT_STATECH;
+			packet_event = PACKET_EVENT::OBJECT_STATE;
 		}
 		virtual ~StateBody() {}
 
@@ -276,7 +328,13 @@ namespace Packet {
 			ar& Idx;
 			ar& Nickname;
 			ar& Skill;
-			ar& Exp, PHp, PAttack, PDefence, Level, Quest, Session;
+			ar& Exp;
+			ar& PHp;
+			ar& PAttack;
+			ar& PDefence;
+			ar& Level;
+			ar& Quest;
+			ar& Session;
 		}
 		virtual packet_ptr Make_packet()
 		{
@@ -298,4 +356,59 @@ namespace Packet {
 			ia >> *this;
 		}
 	};
+
+	class LoadUnitBody : public Body_interface, Header
+	{
+	public:
+		friend class boost::serialization::access;
+		/////
+		template<class Archive>
+		void serialize(Archive& ar, const unsigned int version)
+		{
+			ar& name;
+			ar& object_type;
+			ar& ismonster;
+			ar& state;
+			ar& fullhp;
+			ar& nowhp;
+			ar& x;
+			ar& y;
+			ar& rotate;
+		}
+		std::wstring name;
+		int object_type;
+		int ismonster;
+		int state;
+		int fullhp;
+		int nowhp;
+		int x;
+		int y;
+		int rotate;
+
+		LoadUnitBody()
+		{
+			packet_event = PACKET_EVENT::LOAD_UNIT;
+		}
+		virtual ~LoadUnitBody() {}
+		/////
+		virtual packet_ptr Make_packet()
+		{
+			std::wstringstream ss;
+			boost::archive::text_woarchive oa(ss, boost::archive::no_header);
+			oa << const_cast<const LoadUnitBody&>(*this);
+			std::wstring s = ss.str();
+			return std::make_shared<Packet>(packet_event, s.c_str(), s.length());
+		}
+
+		virtual void Make_Body(const wchar_t * packet_body, UINT len) {
+			boost::array<wchar_t, 1024> buf;
+			std::wmemcpy(buf.data(), packet_body, len);
+			buf[len] = 0;
+			std::wcout << buf.data() << std::endl;
+			std::wstringstream ss(buf.data());
+			boost::archive::text_wiarchive ia(ss, boost::archive::no_header);
+			ia >> *this;
+		}
+	};
+
 }

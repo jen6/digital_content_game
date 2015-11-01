@@ -15,7 +15,7 @@ using namespace boost::asio::ip;
 namespace asio = boost::asio;
 
 
-class client
+class ClientSock
 {
 private:
 	Packet::packet_ptr recv_buf;
@@ -31,15 +31,15 @@ private:
 	void handle_send(const boost::system::error_code& error);
 	void dotest();
 public:
-	client(asio::io_service& , tcp::resolver::iterator );
+	ClientSock(asio::io_service& , tcp::resolver::iterator );
 	void close();
-	client() = delete;
+	ClientSock() = delete;
 
 	Packet::UserInfoBody* user;
 	void sendSession(std::wstring);
 	void move(float , float );
 	void send(Packet::packet_ptr& );
 	void reconnect(tcp::resolver::iterator);
-	~client();
+	~ClientSock();
 };
 

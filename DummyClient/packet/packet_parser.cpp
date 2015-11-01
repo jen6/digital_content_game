@@ -12,11 +12,12 @@ namespace Packet
 
 		std::memcpy(&event, Pdata, sizeof(UINT));
 		std::memcpy(&length, Pdata + 4, sizeof(UINT));
+		std::cout << "event : " << event << std::endl;
 		return Header(length, static_cast<PACKET_EVENT>(event));
 	}
 
 	//패킷 바디를 파싱
-	void Parse(packet_ptr p, client& cle)
+	void Parse(packet_ptr p, ClientSock& cle)
 	{
 		UINT length, event;
 		wchar_t * data_ptr = p.get()->data();
@@ -42,15 +43,24 @@ namespace Packet
 			break;
 
 		case PACKET_EVENT::USER_INFO:
+			
 			ptr = new UserInfoBody();
 			ptr->Make_Body(data_ptr + HEADER_IDX, length);
 			cle.user = dynamic_cast<UserInfoBody *>(ptr);
+			std::cout << "user info : " << cle.user->PAttack
+				<< " " << cle.user->Quest
+				<< std::endl;
 			break;
 
 		case PACKET_EVENT::SESSION_NO_MATCH:
 			std::cout << "no session match" << std::endl;
 			cle.close();
 			//세션 안맞을때 처리할 방법
+			break;
+		case PACKET_EVENT::LOAD_UNIT:
+			ptr = new LoadUnitBody();
+			ptr->Make_Body(data_ptr + HEADER_IDX, length);
+			std::cout <<"hp : " <<dynamic_cast<LoadUnitBody*>(ptr)->fullhp << std::endl;
 			break;
 
 		case PACKET_EVENT::OBJECT_MOVE:

@@ -57,7 +57,7 @@ private:
 	void handle_check_session(const boost::system::error_code& error);
 	
 	//void handler(const boost::system::error_code & error, std::size_t recv_size);
-	Packet::UserInfoBody * info;
+	Packet::UserInfoBody * info = nullptr;
 	asio::strand strand;
 	asio::ip::tcp::socket _socket;
 	boost::array<wchar_t, MAX_LENGTH> data_;

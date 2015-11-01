@@ -4,13 +4,13 @@
 #include <cstdlib>
 #include <sstream>
 
-#include "..\client.h"
+#include "..\client_sock.h"
 
 
-class client;
+class ClientSock;
 
 namespace Packet 
 {
 	Header ParseHeader(packet_ptr p);
-	void Parse(packet_ptr p, client& cle);
+	void Parse(packet_ptr p, ClientSock& cle);
 }

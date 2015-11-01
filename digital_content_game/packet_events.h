@@ -6,21 +6,38 @@ namespace Packet
 	using UINT = unsigned int;
 	enum class PACKET_EVENT : UINT
 	{
-		GAME_START = 0,
+		CHECK_SESSION, // string session
 
-		CHECK_SESSION,		//세션 체크
+					   // 서버
+		SESSION_NO_MATCH,	//로그인 실패시
+		USER_INFO,
 
-		PORTAL_USERINFO,	//포탈타고 유저 정보 보낼때
+		// 클라이언트
+		REQUEST_ENTER_MAP, // std::wstring Name, 
+		REQUEST_EXIT_MAP, // int object_idx
 
-		SESSION_NO_MATCH, //세션 가지고 올바른 유저를 찾지 못했을 경우
+						  // 서버
+		ACCEPT_ENTER,
+		ACCEPT_EXIT,
+		LOAD_UNIT,	// wstring name, int typenum, bool monster, 
+					//int state, int fullhp, int nowhp, float x, float y, bool rotate
+		GAME_INFO, // int mapnum, int unitnum
+		END_LOAD,
 
-		USER_INFO,		//유저 자신에 대한 정보 받기
+				   // 공용
+		OBJECT_MOVE, // int object_idx, float x, float y
+		OBJECT_STATE, // int object_idx, int state
+		OBJECT_CHAT, // int object_idx, wstring chat
 
-		LOAD_INFO,		//게임 시작 정보들 관련 정보 로드
+					 // 클라이언트
+		OBJECT_ATTACK, // int object_idx, int damage_per
 
-		OBJECT_STATECH, //오브젝트 스텟변경
-						//이 안에 이동 멈춤 공격 스킬 등등 상태 넣기
-		OBJECT_MOVE,
+					   // 서버
+		ADD_UNIT,	// wstring name, int typenum, bool monster, 
+					//int state, int fullhp, int nowhp, float x, float y, bool rotate
+		ERASE_UNIT, // int object_idx
+		OBJECT_HIT, // int object_idx, int damage
+		GET_EXP, // int exp
 
 		TESTER,
 	};

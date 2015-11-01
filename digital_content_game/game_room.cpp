@@ -8,9 +8,10 @@ room_ptr game_room::create(asio::io_service & io, unsigned short port_num, Threa
 	return room_ptr(new game_room(io, port_num, tp));
 }
 
+//TODO : 바꾸기
 game_room::game_room(asio::io_service &_io_service, unsigned short port_num, ThreadPoolPtr tp)
 	: _acceptor(_io_service, asio::ip::tcp::endpoint(asio::ip::tcp::v4(), port_num)),
-	pool(tp)
+	pool(tp), map(0, 0)
 {
 	roomnum = boost::lexical_cast<std::string>(port_num);
 	start_accept();
@@ -19,7 +20,6 @@ game_room::game_room(asio::io_service &_io_service, unsigned short port_num, Thr
 
 game_room::~game_room()
 {
-	
 }
 
 void game_room::start_accept()
@@ -69,6 +69,8 @@ void game_room::UserDelete(session_ptr session)
 	auto target = std::find(users.begin(), users.end(), session);
 	auto ptr = *target;
 	users.erase(target);
+	
+
 
 	std::string log = "ptr cnt : " + ptr.use_count();
 	Log::Logger::Instance()->L(log + " in room " + roomnum);
@@ -233,24 +235,32 @@ Packet::Body_interface* game_session::SessionCheck(std::wstring wsession)
 {
 	std::string session = Utils::Ws2S(wsession);
 	//string으로 변환
-	std::cout << "recv session : " << session << std::endl;
 
-	auto user = DB::DbManager::Instance()->GetUser(session);
-	std::cout << "recv session : " << user.UserSession << std::endl;
+	Log::Logger::Instance()->L("user : " + session + " is try to session check");
+
+	try {
+		auto user = DB::DbManager::Instance()->GetUser(session);
+		if (user.UserSession == session)
+		{
+			Log::Logger::Instance()->L("session match : " + session);
+			Packet::UserInfoBody *  userBody = new Packet::UserInfoBody(user);
+			info = userBody;
+			return dynamic_cast<Packet::Body_interface*>(userBody);
+		}
+		else
+		{
+			Log::Logger::Instance()->L("session not match");
+			_game_room.UserDelete(this->shared_from_this());
+			return nullptr;
+			//세션 추가된것을 session vector에서 지워줘야함
+		}
+	}
+	catch (std::exception& e)
+	{
+		std::cerr << "error in check session : " << e.what() << std::endl;
+	}
 	//세션이 맞을 경우
-	if (user.UserSession == session)
-	{
-		Packet::UserInfoBody *  userBody = new Packet::UserInfoBody(user);
-		info = userBody;
-		return dynamic_cast<Packet::Body_interface*>(userBody);
-		Log::Logger::Instance()->L("session match : " + session);
-	}
-	else
-	{
-		_game_room.UserDelete(this->shared_from_this());
-		return nullptr;
-		//세션 추가된것을 session vector에서 지워줘야함
-	}
+	
 }
 
 void game_session::send(Packet::packet_ptr p)
@@ -281,7 +291,10 @@ void game_session::broadcast(Packet::packet_ptr p)
 
 game_session::~game_session()
 {
-	close();
+	if (info != nullptr)
+	{
+		delete info;
+	}
 }
 
 game_session::game_session(asio::io_service & _io_service, game_room& room) : _socket(_io_service), _game_room(room), strand(_io_service)
